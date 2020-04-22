@@ -1,0 +1,19 @@
+{% load static %}
+<html>
+  <head>
+    {% include "resources/dependencies.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <script src="{% static 'toolbar/toolbar.js' %}"></script>
+    <title>Canvas Grader</title>
+  </head>
+  <body ng-app="canvas_grader" ng-controller="canvas_grader">
+    {% include "toolbar/toolbar.html" %}
+    <h1>Domains</h1>
+        <ul>
+        {% for domain in domains %}
+            <li style="font-size: large; padding: .25em"><a href="lines/{{ domain.id }}">{{ domain.url }}</a></li>
+        {% endfor %}
+        </ul>
+  </body>
+</html>
+
