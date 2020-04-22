@@ -1,0 +1,49 @@
+{% load static %}
+<html>
+  <head>
+    {% include "resources/dependencies.html" %}
+    {% include "toolbar/dependencies.html" %}
+    <script src="{% static 'tokens/tokens.js' %}"></script>
+    <title>Canvas Grader</title>
+  </head>
+  <body ng-app="canvas_grader" ng-controller="canvas_grader">
+    {% include "toolbar/toolbar.html" %}
+    <h1>Settings</h1>
+        <table st-table="rowCollection" class="table table-stiped">
+            <thead>
+            <tr>
+                <th>Domain</th>
+                <th>Canvas API Token</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="t in tokens">
+                <td>
+                    <md-input-container>
+                        <input maxlength="30" ng-model="t.domain" aria-label="domain"></input>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <input maxlength="66" ng-model="t.token" aria-label="token"></input>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-button aria-label="remove token/domain" ng-click="RemoveRow(t)">
+                        <md-icon>remove</md-icon>
+                    </md-button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <md-button aria-label="add token/domain" ng-click="AddRow()">
+                        <md-icon>add</md-icon>
+                    </md-button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <ng-button class="btn btn-success" ng-click="Save()">Save</ng-button>
+  </body>
+</html>
+
