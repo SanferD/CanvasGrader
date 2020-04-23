@@ -11,7 +11,9 @@
     <h1>Domains</h1>
         <ul>
         {% for domain in domains %}
-            <li style="font-size: large; padding: .25em"><a href="lines/{{ domain.id }}">{{ domain.url }}</a></li>
+            <li style="font-size: large; padding: .25em">
+                <a href="/domains/{{ domain.id }}/courses">{{ domain.url }}</a>
+            </li>
         {% endfor %}
         </ul>
   </body>
