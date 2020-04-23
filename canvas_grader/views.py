@@ -6,7 +6,9 @@ from canvas_grader import api
 
 def Index(request):
     if request.user.is_authenticated:
-        domains = []
+        user = request.user
+        tokens = Token.objects.filter(user = user)
+        domains = [token.domain for token in tokens]
         response = render(request, "resources/domains.html", {"domains": domains})
     else:
         response = render(request, "login/login.html", {})
