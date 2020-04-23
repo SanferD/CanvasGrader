@@ -2,9 +2,10 @@ from django.db import models
 from canvas_grader.models.serializable_model import FkSerializableModel
 from .domain import Domain
 from server import settings
+from canvas_grader.models import fields as cgf
 
 class Profile(FkSerializableModel):
-    user_id = models.IntegerField()
+    user_id = cgf.CanvasIdField()
     name = models.CharField(max_length = 50, blank = False, null = False)
 
     class Meta:
