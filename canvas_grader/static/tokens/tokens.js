@@ -13,11 +13,11 @@ function Initialize()
 {
     $http.get("tokens").then(function(resp) {
         $scope.tokens = resp.data.map(ServerToken2ClientToken)
-        $scope.tokens_old = $scope.tokens.slice()
+        $scope.tokens_old = resp.data.map(ServerToken2ClientToken)
     })
 }
 
-function ServerToken2ClientToken()
+function ServerToken2ClientToken(x)
 {
     var token = x.token
     var domain = x.domain.url
@@ -84,7 +84,7 @@ function IsToken(t)
 
 function EqualTokens(t1, t2)
 {
-    return t1.domain == t2.domain && t1.token == t2.token
+    return t1.id == t2.id && t1.domain == t2.domain && t1.token == t2.token
 }
 
 }) 
