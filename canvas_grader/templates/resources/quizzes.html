@@ -9,15 +9,17 @@
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
     <h1>{{ domain.url }} > 
-        <a href="/domains/{{ domain.id }}/courses">Courses</a>
+        <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
+        <a href="/courses/{{ course.id }}/quizzes">Quizzes</a>
     </h1>
         <ul>
-        {% for course in courses %}
+        {% for quiz in quizzes %}
             <li style="font-size: large; padding: .25em">
-                <a href="/courses/{{ course.id }}/quizzes">{{ course.name }}</a>
+                <a href="/quizzes/{{ quiz.id }}/grading-views">{{ quiz.assignment.name }}</a>
             </li>
         {% endfor %}
         </ul>
   </body>
 </html>
+
 
