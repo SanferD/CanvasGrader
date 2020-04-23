@@ -10,6 +10,11 @@ def GetUserByUserId(domain, token, user_id):
     user = canvas.get_user(user_id)
     return user
 
+def GetCourse(token, course_id):
+    canvas = GetCanvas(token.domain.url, token.token)
+    course = canvas.get_course(course_id)
+    return course
+
 def GetCourses(token):
     canvas = GetCanvas(token.domain.url, token.token)
     courses = canvas.get_courses()

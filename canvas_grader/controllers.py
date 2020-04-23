@@ -1,5 +1,5 @@
 from canvas_grader import api
-from canvas_grader.models import Course, CourseLink, Assignment, Quiz
+from canvas_grader.models import Token, Course, CourseLink, Assignment, Quiz
 from django.utils.dateparse import parse_datetime
 
 def Populate(token):
@@ -14,10 +14,19 @@ def Populate(token):
                         "name": c["name"],
                         "created_at": created_at,
                     })
-        course_link = CourseLink.objects.get_or_create(
+        course_link, _ = CourseLink.objects.get_or_create(
                         user = token.user,
                         course = course)
+        PopulateWithAPICourse(course, api_course)
 
+def PopulateWithCourseLink(course_link):
+        course = course_link.course
+        user = course_link.user
+        token = Token.objects.get(user = user, domain = course.domain)
+        api_course = api.GetCourse(token, course.course_id)
+        PopulateWithAPICourse(course, api_course)
+
+def PopulateWithAPICourse(course, api_course):
         api_quiz_assignments = api.GetQuizAssignments(api_course)
         for api_quiz_assignment in api_quiz_assignments:
             a = api_quiz_assignment.attributes
