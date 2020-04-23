@@ -1,5 +1,7 @@
 from canvas_grader import api
-from canvas_grader.models import Token, Course, CourseLink, Assignment, Quiz
+from canvas_grader.models import Token, Course, CourseLink, \
+                                 Assignment, Quiz, \
+                                 QuizQuestionGroup, QuizQuestion
 from django.utils.dateparse import parse_datetime
 
 def Populate(token):
@@ -19,7 +21,7 @@ def Populate(token):
                         course = course)
         PopulateWithAPICourse(course, api_course)
 
-def PopulateWithCourseLink(course_link):
+def PopulateCourseLink(course_link):
         course = course_link.course
         user = course_link.user
         token = Token.objects.get(user = user, domain = course.domain)
@@ -53,5 +55,25 @@ def PopulateWithAPICourse(course, api_course):
                             "speed_grader_url": q["speed_grader_url"],
                             "question_count": q["question_count"],
                         })
+            PopulateWithAPIQuiz(quiz, api_quiz)
 
+def PopulateWithAPIQuiz(quiz, api_quiz):
+    api_questions = api_quiz.get_questions()
+    for api_question in api_questions:
+        a = api_question.attributes
+        group_id = a["quiz_group_id"]
+        if group_id:
+            quiz_question_group, _ = QuizQuestionGroup.objects.get_or_create(
+                                    quiz = quiz, group_id = group_id)
+        else:
+            quiz_question_group = None
+        quiz_question, _ = QuizQuestion.objects.get_or_create(
+                                quiz = quiz,
+                                question_id = a["id"],
+                                defaults = {
+                                    "question_name": a["question_name"],
+                                    "question_text": a["question_text"],
+                                    "quiz_question_group": quiz_question_group,
+                                    "points_possible": a["points_possible"],
+                                })
 

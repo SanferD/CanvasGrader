@@ -24,3 +24,21 @@ class Quiz(FkSerializableModel):
     class Meta:
         unique_together = ("assignment", "quiz_id")
 
+class QuizQuestionGroup(FkSerializableModel):
+    quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
+    group_id = cgf.CanvasIdField()
+
+    class Meta:
+        unique_together = ("quiz", "group_id")
+
+class QuizQuestion(FkSerializableModel):
+    quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
+    question_id = cgf.CanvasIdField()
+    question_name = models.CharField(max_length = 100, blank = False, null = False)
+    question_text = models.TextField()
+    quiz_question_group = models.ForeignKey(QuizQuestionGroup, on_delete = models.CASCADE, null = True)
+    points_possible = models.FloatField()
+
+    class Meta:
+        unique_together = ("quiz", "question_id")
+
