@@ -19,6 +19,14 @@ def GetCourses(token):
 def IsTaCourse(course):
     return course.attributes["enrollments"][0]["role"] in ("TaEnrollment", "TeacherEnrollment")
 
+def GetQuizAssignments(course):
+    assignments = GetAssignments(course)
+    quiz_assignments = [a for a in assignments if a.attributes["is_quiz_assignment"]]
+    return quiz_assignments
+
+def GetAssignments(course):
+    return course.get_assignments()
+
 def GetCanvas(domain, token):
     if not domain.startswith("https://"):
         domain = "https://" + domain
