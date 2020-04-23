@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import views
 from rest_framework.response import Response
-from canvas_grader.models import Domain, Token, Profile
+from canvas_grader.models import Domain, Token, Profile, Course, CourseLink
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -70,4 +70,25 @@ class Tokens(views.APIView):
         id = data.get("id")
         if id:
             Token.objects.get(id = id).delete()
+
+def GetCourses(request, domain_id):
+    user = request.user
+    try:
+        domain = Domain.objects.get(id = domain_id)
+    except Domain.DoesNotExist:
+        domain = None
+
+    if domain:
+        links = CourseLink.objects.filter(user = user)
+        courses = [l.course for l in links]
+    else:
+        courses = None
+
+    if domain is None or courses is None:
+        response = Response(status = 404)
+    else:
+        data = {"domain": domain, "courses": courses}
+        response = render(request, "resources/courses.html", data)
+    return response
+
 
