@@ -3,6 +3,7 @@ from rest_framework import views
 from rest_framework.response import Response
 from canvas_grader.models import Domain, Token, Profile
 from canvas_grader import api
+from canvas_grader import controllers
 
 def Index(request):
     if request.user.is_authenticated:
@@ -56,6 +57,7 @@ class Tokens(views.APIView):
             profile, _ = Profile.objects.get_or_create(user_id = u["id"], defaults = {"name": u["name"]})
             token = Token(user = user, token = api_token, domain = domain, profile = profile)
         token.save()
+        controllers.Populate(token)
 
     def __deleteToken(self, user, data):
         id = data.get("id")
