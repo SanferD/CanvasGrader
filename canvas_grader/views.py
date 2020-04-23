@@ -46,16 +46,23 @@ class Tokens(views.APIView):
         return response
 
     def __createOrUpdateToken(self, user, data):
-        id, api_token, domain_url = data.get("id"), data["token"], data["domain"]
+        id = data.get("id")
+        api_token = data["token"]
+        domain_url = data["domain"]
+        # also a test for api call with domain + token pair
+        u = api.GetCurrentUser(domain_url, api_token).attributes
         domain, _ = Domain.objects.get_or_create(url = domain_url)
         if id:
             token = Token.objects.get(id = id)
             token.token = api_token
             token.domain = domain
         else:
-            u = api.GetCurrentUser(domain_url, api_token).attributes
-            profile, _ = Profile.objects.get_or_create(user_id = u["id"], defaults = {"name": u["name"]})
-            token = Token(user = user, token = api_token, domain = domain, profile = profile)
+            defaults = {"name": u["name"]}
+            profile, _ = Profile.objects.get_or_create(
+                            user_id = u["id"], defaults = defaults)
+            token = Token(
+                        user = user, token = api_token,
+                        domain = domain, profile = profile)
         token.save()
         controllers.Populate(token)
 
