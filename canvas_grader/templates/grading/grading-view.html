@@ -3,19 +3,75 @@
   <head>
     {% include "resources/dependencies.html" %}
     <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
-    <script src="{% static 'toolbar/toolbar.js' %}"></script>
+    <script src="{% static 'grading-views/grading-views.js' %}"></script>
     <title>Canvas Grader</title>
   </head>
-  <body ng-app="canvas_grader" ng-controller="canvas_grader">
+  <body ng-app="grading-views" ng-controller="grading-views">
+    <input type="hidden" id="grading-view" value="{{ grading_view }}"></input>
+    <input type="hidden" id="quiz-id" value="{{ quiz.id }}"></input>
     {% include "toolbar/toolbar.html" %}
     <h1>{{ domain.url }} > 
         <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
         <a href="/courses/{{ course.id }}/quizzes">Quizzes</a> >
-        <a href="/quizzes/{{ quiz.id }}/grading-views/add">Create Grading View</a>
+        <a href="/quizzes/{{ quiz.id }}/grading-views/add">Create Grading View for {{ quiz.assignment.name }}</a>
     </h1>
-    New grading view
+    {% verbatim %}
+    <div>
+        <md-input-container>
+            View Name:
+            <input maxlength="30"
+                   ng-model="grading_view.name"
+                   aria-label="domain"></input>
+        </md-input-container>
+    </div>
+    <div ng-repeat="grading_group in grading_view.grading_groups">
+        <table st-table="rowCollection" class="table table-stiped">
+        <tr>
+            <td colspan="3">
+                <md-input-container>
+                    Group Name:
+                    <input maxlength="30"
+                           ng-model="grading_group.name"
+                           aria-label="domain"></input>
+                </md-input-container>
+            </td>
+        </tr>
+        <tr ng-repeat="question in grading_group.questions track by $index">
+            <td>Question {{$index + 1}}:</td>
+            <td colspan="1">
+                <select ng-model="grading_group.questions[$index]"
+                        ng-options="q.name for q in all_questions">
+                <select>
+            </td>
+            <td>
+                <md-button aria-label="add token/domain"
+                           ng-click="RemoveQuestionRow(grading_group, question)">
+                    <md-icon>remove</md-icon>
+                </md-button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <md-button aria-label="add token/domain"
+                           ng-click="AddQuestionRow(grading_group)">
+                    <md-icon>add</md-icon>
+                </md-button>
+            </td>
+        </tr>
+        </table>
+        
+    </div>
+    <ng-button class="btn btn-success" ng-click="AddNewGradingGroup()">
+        Add New Group
+    </ng-button>
+    <ng-button class="btn btn-success" ng-click="Save()">
+        Save
+    </ng-button>
+    <div ng-if="show_duplicate_questions_errmsg">Please include questions and remove duplicate questions</div>
+    <div ng-if="show_invalid_name">Please fill in missing group names</div>
+    <div ng-if="show_missing_view_name_errmsg">Please provide missing view name</div>
+    <div ng-if="show_empty_errmsg">Please provide grading groups</div>
+    {% endverbatim %}
   </body>
 </html>
-
-
 

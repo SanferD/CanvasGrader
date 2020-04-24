@@ -1,6 +1,9 @@
 function GetValue(id)
 {
-    return document.getElementById(id).value
+    var value = document.getElementById(id).value
+    if (value == "None")
+        value = undefined
+    return value
 }
 
 function GetValueJSON(id)
