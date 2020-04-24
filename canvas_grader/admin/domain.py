@@ -1,11 +1,17 @@
 from django.contrib import admin
 from inline_actions.admin import InlineActionsMixin, InlineActionsModelAdminMixin
-from canvas_grader.models import Domain
+from canvas_grader.models import Domain, Course, CourseLink
+from canvas_grader.admin import model_admins as cga
 
 @admin.register(Domain)
-class DomainAdmin(InlineActionsModelAdminMixin, admin.ModelAdmin):
+class DomainAdmin(cga.ROModelAdmin):
     inlines = []
 
-    def has_add_permission(self, request, obj = None):
-        return False
+@admin.register(Course)
+class CourseAdmin(cga.ROModelAdmin):
+    inlines = []
+
+@admin.register(CourseLink)
+class CourseLinkAdmin(cga.ROModelAdmin):
+    inlines = []
 

@@ -6,6 +6,9 @@ from server import settings
 class Domain(FkSerializableModel):
     url = models.URLField(max_length = 30)
 
+    def __str__(self):
+        return self.url
+
 class Course(FkSerializableModel):
     course_id = cgf.CanvasIdField()
     name = models.CharField(max_length = 100, blank = False, null = False)
@@ -15,10 +18,16 @@ class Course(FkSerializableModel):
     class Meta:
         unique_together = ("course_id", "domain")
 
+    def __str__(self):
+        return self.name
+
 class CourseLink(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     course = models.ForeignKey(Course, on_delete = models.CASCADE)
 
     class Meta:
         unique_together = ("user", "course")
+
+    def __str__(self):
+        return "{}: {}".format(str(self.user), str(self.course))
 
