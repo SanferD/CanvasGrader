@@ -4,7 +4,7 @@ from canvas_grader.models import Token, Course, CourseLink, \
                                  QuizQuestionGroup, QuizQuestion, \
                                  CanvasUser, Submission, \
                                  SubmissionHistoryItem, \
-                                 SubmissionDatum
+                                 SubmissionDatum, AssessmentItem
 from django.utils.dateparse import parse_datetime
 
 def Populate(token):
@@ -25,40 +25,40 @@ def Populate(token):
         PopulateWithAPICourse(course, api_course)
 
 def PopulateCourseLink(course_link):
-        course = course_link.course
-        user = course_link.user
-        token = Token.objects.get(user = user, domain = course.domain)
-        api_course = api.GetCourse(token, course.course_id)
-        PopulateWithAPICourse(course, api_course)
+    course = course_link.course
+    user = course_link.user
+    token = Token.objects.get(user = user, domain = course.domain)
+    api_course = api.GetCourse(token, course.course_id)
+    PopulateWithAPICourse(course, api_course)
 
 def PopulateWithAPICourse(course, api_course):
-        api_quiz_assignments = api.GetQuizAssignments(api_course)
-        for api_quiz_assignment in api_quiz_assignments:
-            a = api_quiz_assignment.attributes
-            created_at = parse_datetime(  a["created_at"]  )
-            updated_at = parse_datetime(  a["updated_at"]  )
-            points_possible = a["points_possible"] if a["points_possible"] else 0.0
-            assignment, _ = Assignment.objects.get_or_create(
-                                    course = course,
-                                    assignment_id = a["id"],
-                                    defaults = {
-                                        "name": a["name"],
-                                        "points_possible": points_possible,
-                                        "created_at": created_at,
-                                        "updated_at": updated_at,
-                                        "html_url": a["html_url"],
-                                    })
+    api_quiz_assignments = api.GetQuizAssignments(api_course)
+    for api_quiz_assignment in api_quiz_assignments:
+        a = api_quiz_assignment.attributes
+        created_at = parse_datetime(  a["created_at"]  )
+        updated_at = parse_datetime(  a["updated_at"]  )
+        points_possible = a["points_possible"] if a["points_possible"] else 0.0
+        assignment, _ = Assignment.objects.get_or_create(
+                                course = course,
+                                assignment_id = a["id"],
+                                defaults = {
+                                    "name": a["name"],
+                                    "points_possible": points_possible,
+                                    "created_at": created_at,
+                                    "updated_at": updated_at,
+                                    "html_url": a["html_url"],
+                                })
 
-            api_quiz = api_course.get_quiz(a["quiz_id"])
-            q = api_quiz.attributes
-            quiz, _ = Quiz.objects.get_or_create(
-                        assignment = assignment,
-                        quiz_id = q["id"],
-                        defaults = {
-                            "speed_grader_url": q["speed_grader_url"],
-                            "question_count": q["question_count"],
-                        })
-            PopulateWithAPIQuiz(quiz, api_quiz_assignment, api_quiz)
+        api_quiz = api_course.get_quiz(a["quiz_id"])
+        q = api_quiz.attributes
+        quiz, _ = Quiz.objects.get_or_create(
+                    assignment = assignment,
+                    quiz_id = q["id"],
+                    defaults = {
+                        "speed_grader_url": q["speed_grader_url"],
+                        "question_count": q["question_count"],
+                    })
+        PopulateWithAPIQuiz(quiz, api_quiz_assignment, api_quiz)
 
 def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
     api_questions = api_quiz.get_questions()
@@ -118,4 +118,11 @@ def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
                                                     defaults = {
                                                         "text": d["text"],
                                                     })
+                            if "more_comments" in d:
+                                assessment_item, _ = AssessmentItem.objects.update_or_create(
+                                                        submission_datum = submission_datum,
+                                                        defaults = {
+                                                            "score": d["points"],
+                                                            "comment": d["more_comments"]
+                                                        })
 

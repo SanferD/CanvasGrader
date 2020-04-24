@@ -37,3 +37,8 @@ class SubmissionDatum(FkSerializableModel):
     class Meta:
         unique_together = ("quiz_question", "submission_history_item")
 
+class AssessmentItem(FkSerializableModel):
+    submission_datum = models.OneToOneField(SubmissionDatum, on_delete = models.CASCADE)
+    score = models.FloatField()
+    comment = models.TextField()
+
