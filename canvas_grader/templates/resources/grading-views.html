@@ -1,0 +1,28 @@
+{% load static %}
+<html>
+  <head>
+    {% include "resources/dependencies.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <script src="{% static 'toolbar/toolbar.js' %}"></script>
+    <title>Canvas Grader</title>
+  </head>
+  <body ng-app="canvas_grader" ng-controller="canvas_grader">
+    {% include "toolbar/toolbar.html" %}
+    <h1>{{ domain.url }} > 
+        <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
+        <a href="/courses/{{ course.id }}/quizzes">Quizzes</a> >
+        <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a>
+    </h1>
+        <ul>
+        {% for gv in grading_views %}
+            <li style="font-size: large; padding: .25em">
+                <a href="/quizzes/{{ quiz.id }}/grading-views/{{ gv.id }}/grading-groups">
+                    {{ gv.name }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+  </body>
+</html>
+
+
