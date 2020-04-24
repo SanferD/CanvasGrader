@@ -20,6 +20,9 @@ class Assignment(FkSerializableModel):
     class Meta:
         unique_together = ("assignment_id", "course")
 
+    def __str__(self):
+        return self.name
+
 class Quiz(FkSerializableModel):
     assignment = models.ForeignKey(Assignment, on_delete = models.CASCADE)
     quiz_id = cgf.CanvasIdField()
@@ -28,6 +31,9 @@ class Quiz(FkSerializableModel):
 
     class Meta:
         unique_together = ("assignment", "quiz_id")
+
+    def __str__(self):
+        return str(self.assignment)
 
 class QuizQuestionGroup(FkSerializableModel):
     quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
@@ -47,4 +53,7 @@ class QuizQuestion(FkSerializableModel):
 
     class Meta:
         unique_together = ("quiz", "question_id")
+
+    def __str__(self):
+        return self.question_name
 
