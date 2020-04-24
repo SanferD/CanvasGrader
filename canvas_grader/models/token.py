@@ -11,6 +11,9 @@ class Profile(FkSerializableModel):
     class Meta:
         unique_together = ("user_id", "name")
 
+    def __str__(self):
+        return self.name
+
 class Token(FkSerializableModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     token = models.CharField(max_length=66, blank = False, null = False)
@@ -19,4 +22,7 @@ class Token(FkSerializableModel):
 
     class Meta:
         unique_together = ("token", "domain")
+
+    def __str__(self):
+        return "token for {} on {}".format(str(self.user), self.domain.url)
 
