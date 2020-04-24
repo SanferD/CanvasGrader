@@ -113,6 +113,29 @@ def GetQuizzes(request, course_id):
     return response
 
 def GetGradingViews(request, quiz_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        grading_views = GradingView.objects.filter(quiz = quiz)
+        data = {"domain": course.domain, "course": course,
+                "quiz": quiz, "grading_views": grading_views}
+        response = render(request, "resources/grading-views.html", data)
+    else:
+        response = Response(status = 404)
+        
+    return response
+
+def AddGradingView(request, quiz_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        data = {"domain": course.domain, "course": course,
+                "quiz": quiz}
+        response = render(request, "grading/grading-view.html", data)
+    else:
+        response = Response(status = 404)
+        
+    return response
+
+def QuizId2CourseQuizValid(request, quiz_id):
     user = request.user
     try:
         quiz = Quiz.objects.get(id = quiz_id)
@@ -123,15 +146,7 @@ def GetGradingViews(request, quiz_id):
         course = quiz.assignment.course
         is_valid = CourseLink.objects.filter(user = user, course = course).count() != 0
     else:
+        course = None
         is_valid = False
-
-    if is_valid:
-        grading_views = GradingView.objects.filter(quiz = quiz)
-        data = {"domain": course.domain, "course": course,
-                "quiz": quiz, "grading_views": grading_views}
-        response = render(request, "resources/grading-views.html", data)
-    else:
-        response = Response(status = 404)
-        
-    return response
+    return course, quiz, is_valid
 

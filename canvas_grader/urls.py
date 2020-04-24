@@ -8,5 +8,6 @@ urlpatterns = [
     path('domains/<int:domain_id>/courses', views.GetCourses),
     path('courses/<int:course_id>/quizzes', views.GetQuizzes),
     path('quizzes/<int:quiz_id>/grading-views', views.GetGradingViews),
+    path('quizzes/<int:quiz_id>/grading-views/add', views.AddGradingView),
 ]
 
