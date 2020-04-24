@@ -1,7 +1,10 @@
 from canvas_grader import api
 from canvas_grader.models import Token, Course, CourseLink, \
                                  Assignment, Quiz, \
-                                 QuizQuestionGroup, QuizQuestion
+                                 QuizQuestionGroup, QuizQuestion, \
+                                 CanvasUser, Submission, \
+                                 SubmissionHistoryItem, \
+                                 SubmissionDatum
 from django.utils.dateparse import parse_datetime
 
 def Populate(token):
@@ -55,9 +58,9 @@ def PopulateWithAPICourse(course, api_course):
                             "speed_grader_url": q["speed_grader_url"],
                             "question_count": q["question_count"],
                         })
-            PopulateWithAPIQuiz(quiz, api_quiz)
+            PopulateWithAPIQuiz(quiz, api_quiz_assignment, api_quiz)
 
-def PopulateWithAPIQuiz(quiz, api_quiz):
+def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
     api_questions = api_quiz.get_questions()
     for api_question in api_questions:
         a = api_question.attributes
@@ -77,4 +80,42 @@ def PopulateWithAPIQuiz(quiz, api_quiz):
                                     "question_type": a["question_type"],
                                     "points_possible": a["points_possible"],
                                 })
+        api_submissions = api_assignment.get_submissions(include = ["submission_history", "user"])
+        for api_submission in api_submissions:
+            a = api_submission.attributes
+            if a["workflow_state"] != "unsubmitted":
+                api_user = a["user"]
+                domain = quiz.assignment.course.domain
+                canvas_user, _ = CanvasUser.objects.get_or_create(
+                    user_id = api_user["id"],
+                    domain = domain,
+                    defaults = {
+                        "name": api_user["name"]
+                })
+
+                submission, _ = Submission.objects.get_or_create(
+                                    submission_id = a["id"],
+                                    assignment = quiz.assignment,
+                                    defaults = {
+                                        "posted_at": parse_datetime(a["posted_at"]),
+                                        "preview_url": a["preview_url"],
+                                        "canvas_user": canvas_user,
+                                    })
+                for api_sh in a["submission_history"]:
+                    submission_history_item, _ = SubmissionHistoryItem.objects.get_or_create(
+                        submission = submission,
+                        submission_history_id = api_sh["id"])
+                    
+                    for d in api_sh["submission_data"]:
+                        quiz_questions = QuizQuestion.objects.filter(
+                                            quiz = quiz, question_id = d["question_id"])
+
+                        if quiz_questions.count() > 0:
+                            quiz_question = quiz_questions[0]
+                            submission_datum, _ = SubmissionDatum.objects.get_or_create(
+                                                    submission_history_item = submission_history_item,
+                                                    quiz_question = quiz_question,
+                                                    defaults = {
+                                                        "text": d["text"],
+                                                    })
 
