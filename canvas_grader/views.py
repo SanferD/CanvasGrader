@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import views
 from rest_framework.response import Response
-from canvas_grader.models import Domain, Token, Profile, Course, CourseLink, Quiz
+from canvas_grader.models import Domain, Token, Profile, Course, CourseLink, Quiz, GradingView
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -107,6 +107,29 @@ def GetQuizzes(request, course_id):
         quizzes = Quiz.objects.filter(assignment__course = course)
         data = {"domain": course.domain, "course": course, "quizzes": quizzes}
         response = render(request, "resources/quizzes.html", data)
+    else:
+        response = Response(status = 404)
+        
+    return response
+
+def GetGradingViews(request, quiz_id):
+    user = request.user
+    try:
+        quiz = Quiz.objects.get(id = quiz_id)
+    except Quiz.DoesNotExist:
+        quiz = None
+
+    if quiz:
+        course = quiz.assignment.course
+        is_valid = CourseLink.objects.filter(user = user, course = course).count() != 0
+    else:
+        is_valid = False
+
+    if is_valid:
+        grading_views = GradingView.objects.filter(quiz = quiz)
+        data = {"domain": course.domain, "course": course,
+                "quiz": quiz, "grading_views": grading_views}
+        response = render(request, "resources/grading-views.html", data)
     else:
         response = Response(status = 404)
         
