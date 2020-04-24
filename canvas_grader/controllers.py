@@ -24,10 +24,7 @@ def Populate(token):
                         course = course)
         PopulateWithAPICourse(course, api_course)
 
-def PopulateCourseLink(course_link):
-    course = course_link.course
-    user = course_link.user
-    token = Token.objects.get(user = user, domain = course.domain)
+def PopulateCourse(token, course):
     api_course = api.GetCourse(token, course.course_id)
     PopulateWithAPICourse(course, api_course)
 
@@ -60,11 +57,8 @@ def PopulateWithAPICourse(course, api_course):
                     })
         PopulateWithAPIQuiz(quiz, api_quiz_assignment, api_quiz)
 
-def PopulateQuiz(course_link, quiz):
-    course = course_link.course
-    user = course_link.user
-    token = Token.objects.get(user = user, domain = course.domain)
-    api_course = api.GetCourse(token, course.course_id)
+def PopulateQuiz(token, quiz):
+    api_course = api.GetCourse(token, quiz.assignment.course.course_id)
     api_quiz_assignment = api_course.get_assignment(quiz.assignment.assignment_id)
     api_quiz = api_course.get_quiz(quiz.quiz_id)
     PopulateWithAPIQuiz(quiz, api_quiz_assignment, api_quiz)
