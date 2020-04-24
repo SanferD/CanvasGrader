@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework import views
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from canvas_grader.models import Domain, Token, Profile, Course, CourseLink, Quiz, GradingView
 from canvas_grader import api
 from canvas_grader import controllers
@@ -128,11 +130,22 @@ def AddGradingView(request, quiz_id):
     course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
     if is_valid:
         data = {"domain": course.domain, "course": course,
-                "quiz": quiz}
+                "quiz": quiz, "grading_view": None}
         response = render(request, "grading/grading-view.html", data)
     else:
         response = Response(status = 404)
         
+    return response
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def GetAllQuizQuestions(request, quiz_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        questions = [{"id": q.id, "name": q.question_name} for q in quiz.quizquestion_set.all()]
+        response = Response(questions)
+    else:
+        response = Response(status = 404)
     return response
 
 def QuizId2CourseQuizValid(request, quiz_id):
