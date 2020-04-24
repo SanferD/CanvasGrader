@@ -11,13 +11,13 @@
     <h1>{{ domain.url }} > 
         <a href="/domains/{{ domain.id }}/courses">Courses</a>
     </h1>
-        <ul>
-        {% for course in courses %}
-            <li style="font-size: large; padding: .25em">
-                <a href="/courses/{{ course.id }}/quizzes">{{ course.name }}</a>
-            </li>
-        {% endfor %}
-        </ul>
+    <ul>
+    {% for course in courses %}
+        <li style="font-size: large; padding: .25em">
+            <a href="/courses/{{ course.id }}/quizzes">{{ course.name }}</a>
+        </li>
+    {% endfor %}
+    </ul>
   </body>
 </html>
 

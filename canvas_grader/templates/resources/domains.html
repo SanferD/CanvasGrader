@@ -9,13 +9,13 @@
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
     <h1>Domains</h1>
-        <ul>
-        {% for domain in domains %}
-            <li style="font-size: large; padding: .25em">
-                <a href="/domains/{{ domain.id }}/courses">{{ domain.url }}</a>
-            </li>
-        {% endfor %}
-        </ul>
+    <ul>
+    {% for domain in domains %}
+        <li style="font-size: large; padding: .25em">
+            <a href="/domains/{{ domain.id }}/courses">{{ domain.url }}</a>
+        </li>
+    {% endfor %}
+    </ul>
   </body>
 </html>
 
