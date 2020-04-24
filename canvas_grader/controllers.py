@@ -67,8 +67,7 @@ def PopulateWithAPIQuiz(quiz, api_quiz):
                                     quiz = quiz, group_id = group_id)
         else:
             quiz_question_group = None
-        quiz_question, _ = QuizQuestion.UpdateOrCreate(
-                                a["question_type"],
+        quiz_question, _ = QuizQuestion.objects.get_or_create(
                                 quiz = quiz,
                                 question_id = a["id"],
                                 defaults = {
