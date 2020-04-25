@@ -3,14 +3,12 @@ function InitializeGrader($scope, $http)
 
 $scope.questions = GetValueJSON("questions")
 $scope.quiz_id = GetValue("quiz-id")
+$scope.canvas_users = GetValueJSON("canvas-users")
+console.log($scope.canvas_users)
 
 Initialize()
 function Initialize()
 {
-    $scope.GetCanvasUsers().then(function(resp) {
-        var canvas_users = resp.data
-        console.log(canvas_users)
-    })
 }
 
 }

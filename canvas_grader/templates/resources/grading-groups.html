@@ -18,7 +18,7 @@
     <ul>
     {% for gg in grading_groups %}
         <li style="font-size: large; padding: .25em">
-            <a href="/quizzes/{{ quiz.id }}/grader?grading-group={{ gg.id }}&canvas-user={{ canvas_user.id }}">
+            <a href="/quizzes/{{ quiz.id }}/grader?grading-group={{ gg.id }}">
                 {{ gg.name }}
             </a>
         </li>

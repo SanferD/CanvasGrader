@@ -6,7 +6,7 @@ from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from canvas_grader.models import Domain, Token, Profile, Course, \
                                  CourseLink, Quiz, GradingView, \
                                  GradingGroup, GroupQuestionLink, \
-                                 QuizQuestion
+                                 QuizQuestion, Submission
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -178,11 +178,8 @@ def GetGradingGroups(request, view_id):
         assignment = quiz.assignment
         course = assignment.course
         domain = course.domain
-        canvas_user = assignment.submission_set.order_by("canvas_user__name").first()
-        print(canvas_user)
         data = {"domain": domain, "course": course, "quiz": quiz,
-                "grading_view": view, "grading_groups": grading_groups,
-                "canvas_user": canvas_user}
+                "grading_view": view, "grading_groups": grading_groups}
         response = render(request, "resources/grading-groups.html", data)
     else:
         response = Response(status = 404)
@@ -216,4 +213,24 @@ def QuizId2CourseQuizValid(request, quiz_id):
         course = None
         is_valid = False
     return course, quiz, is_valid
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def GetGradePageForQuiz(request, quiz_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        grading_group_id = request.GET["grading-group"]
+        grading_group = GradingGroup.objects.filter(id = grading_group_id).first()
+        if grading_group:
+            questions = [l.quiz_question.serialize() for l in
+                         grading_group.groupquestionlink_set.order_by("quiz_question__quiz_id")]
+            submissions = Submission.objects.filter(assignment__quiz = quiz)
+            canvas_users = [s.canvas_user.serialize() for s in submissions]
+            data = {"quiz": quiz, "questions": questions, "canvas_users": canvas_users}
+            response = render(request, "grader/grader.html", data)
+        else:
+            response = Response(status = 404)
+    else:
+        response = Response(status = 404)
+    return response
 

@@ -11,6 +11,7 @@
   <body ng-app="grader" ng-controller="grader">
     <input id="quiz-id" type="hidden" value="{{ quiz.id }}"></input>
     <input id="questions" type="hidden" value="{{ questions }}"></input>
+    <input id="canvas-users" type="hidden" value="{{ canvas_users }}"></input>
     {% include "toolbar/toolbar.html" %}
     {% verbatim %}
     <div ng-repeat="question in questions track by $index">
