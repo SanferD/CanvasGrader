@@ -3,6 +3,7 @@
   <head>
     {% include "resources/dependencies.html" %}
     <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'resources/resources.css' %}">
     <script src="{% static 'toolbar/toolbar.js' %}"></script>
     <title>Canvas Grader</title>
   </head>
@@ -10,7 +11,14 @@
     {% include "toolbar/toolbar.html" %}
     <div class="all-content">
     {% include "toolbar/navigation.html" %}
-    <button id="add-grading-view" type="button" class="btn btn-info">Add</button>
+    <div class="action-buttons">
+        <md-button id="add-grading-view"
+                type="button"
+                class="md-primary md-hue-1">
+            Create Grading View
+        </md-button>
+    </div>
+    <span layont="row"><hr flex/></span>
     <ul>
     {% for gg in grading_groups %}
         <li style="font-size: large; padding: .25em">

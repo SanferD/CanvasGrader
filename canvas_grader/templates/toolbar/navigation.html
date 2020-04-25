@@ -10,6 +10,9 @@
 {% if grading_view is not None %}
     > {{ grading_view.name }}
     > <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
+{% if grading_group is not None %}
+    > {{ grading_group.name }}
+{% endif %}
 {% endif %}
 {% endif %}
 {% endif %}

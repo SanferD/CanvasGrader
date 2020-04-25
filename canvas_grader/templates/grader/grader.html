@@ -14,6 +14,8 @@
     <input id="questions" type="hidden" value="{{ questions }}"></input>
     <input id="canvas-users" type="hidden" value="{{ canvas_users }}"></input>
     {% include "toolbar/toolbar.html" %}
+    <div class="all-content">
+    {% include "toolbar/navigation.html" %}
     {% verbatim %}
     <md-input-container>
         <md-select ng-model="canvas_user_selected"
@@ -56,6 +58,7 @@
         </md-content>
     </div>
     {% endverbatim %}
+    </div>
   </body>
 </html>
 
