@@ -27,7 +27,7 @@ class Tokens(views.APIView):
     def get(self, request):
         user = request.user
         tokens = user.token_set.all()
-        tokens = [t.serialize() for t in tokens]
+        tokens = [t.serialize("domain") for t in tokens]
         return Response(tokens)
 
     def post(self, request):
