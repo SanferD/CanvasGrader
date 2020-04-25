@@ -12,7 +12,7 @@ angular.element(Initialize)
 function Initialize()
 {
     $scope.questions.forEach(function(q) {
-        var id = "Q" + q.question_id
+        var id = "Q" + q.id
         q_div = document.getElementById(id)
         q_div.innerHTML = q.question_text.trim()
     })

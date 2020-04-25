@@ -29,7 +29,7 @@
         </md-select>
     </md-input-container>
     <div ng-repeat="question in questions track by $index"
-         id = "D{{question.question_id}}">
+         id = "D{{question.id}}">
         <md-content>
             <md-card>
                 <md-card-title>
@@ -39,7 +39,7 @@
                     </span>
                 </md-card-title>
                 <md-card-content>
-                    <div id="Q{{question.question_id}}"></div>
+                    <div id="Q{{question.id}}"></div>
                     <div ng-if="question.can_answer">
                         <textarea>
                         </textarea>
