@@ -16,7 +16,7 @@ class Profile(FkSerializableModel):
 
 class Token(FkSerializableModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
-    token = models.CharField(max_length=66, blank = False, null = False)
+    token = models.CharField(max_length=100, blank = False, null = False)
     domain = models.ForeignKey(Domain, on_delete = models.CASCADE)
     profile = models.OneToOneField(Profile, on_delete = models.CASCADE)
 
