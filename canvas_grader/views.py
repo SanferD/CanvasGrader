@@ -6,7 +6,7 @@ from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from canvas_grader.models import Domain, Token, Profile, Course, \
                                  CourseLink, Quiz, GradingView, \
                                  GradingGroup, GroupQuestionLink, \
-                                 QuizQuestion, Submission
+                                 QuizQuestion, Submission, AssessmentItem
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -238,3 +238,33 @@ def GetGradePageForQuiz(request, quiz_id):
         response = Response(status = 404)
     return response
 
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def GetSubmission(request, quiz_id):
+    canvas_user_id = request.GET.get("canvas-user", None)
+    if canvas_user_id:
+        course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+        if is_valid:
+            submission = Submission.objects.filter(
+                            assignment = quiz.assignment,
+                            canvas_user__id = canvas_user_id).first()
+            if submission:
+                shi = submission.submissionhistoryitem_set.first()
+                submission_data = shi.submissiondatum_set.all()
+                assessment_items = dict()
+                for a in AssessmentItem.objects.filter(submission_datum__in = submission_data):
+                    assessment_items[a.submission_datum.id] = a.serialize()
+
+                submission_data_items = [d.serialize() for d in submission_data]
+                for d in submission_data_items:
+                    d["assessment"] = assessment_items.get(d["id"])
+                    
+                data = {"submissions": submission_data_items}
+                response = Response(data)
+            else:
+                response = Response(status = 404)
+        else:
+            response = Response(status = 404)
+    else:
+        response = Response(status = 404)
+    return response
