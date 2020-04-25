@@ -1,0 +1,19 @@
+{% if domain is not None %}
+<h4 class="navigation">{{ domain.url }}
+    > <a href="/domains/{{ domain.id }}/courses">Courses</a>
+{% if course is not None %}
+    > {{ course.name }}
+    > <a href="/courses/{{ course.id }}/quizzes">Quizzes</a>
+{% if quiz is not None %}
+    > {{ quiz.assignment.name }}
+    > <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a>
+{% if grading_view is not None %}
+    > {{ grading_view.name }}
+    > <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
+{% endif %}
+{% endif %}
+{% endif %}
+</h4>
+{% endif %}
+<span layont="row"><hr flex/></span>
+

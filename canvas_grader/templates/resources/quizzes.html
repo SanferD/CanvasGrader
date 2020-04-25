@@ -8,10 +8,8 @@
   </head>
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
-    <h1>{{ domain.url }} > 
-        <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
-        <a href="/courses/{{ course.id }}/quizzes">Quizzes</a>
-    </h1>
+    <div class="all-content">
+    {% include "toolbar/navigation.html" %}
     <ul>
     {% for quiz in quizzes %}
         <li style="font-size: large; padding: .25em">
@@ -19,6 +17,7 @@
         </li>
     {% endfor %}
     </ul>
+    </div>
   </body>
 </html>
 

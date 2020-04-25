@@ -8,12 +8,8 @@
   </head>
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
-    <h1>{{ domain.url }} > 
-        <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
-        <a href="/courses/{{ course.id }}/quizzes">Quizzes</a> >
-        <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a> >
-        <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
-    </h1>
+    <div class="all-content">
+    {% include "toolbar/navigation.html" %}
     <button id="add-grading-view" type="button" class="btn btn-info">Add</button>
     <ul>
     {% for gg in grading_groups %}
@@ -24,6 +20,7 @@
         </li>
     {% endfor %}
     </ul>
+  </div>
   </body>
   <script type = "text/javascript">
     document.getElementById("add-grading-view").onclick = function () {
