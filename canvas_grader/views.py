@@ -57,18 +57,19 @@ class Tokens(views.APIView):
         # also a test for api call with domain + token pair
         u = api.GetCurrentUser(domain_url, api_token).attributes
         domain, _ = Domain.objects.get_or_create(url = domain_url)
-        if id:
-            token = Token.objects.get(id = id)
+
+        defaults = {"name": u["name"]}
+        token = Token.objects.filter(id = id)
+        if token:
             token.token = api_token
             token.domain = domain
+            token.save()
         else:
-            defaults = {"name": u["name"]}
             profile, _ = Profile.objects.get_or_create(
                             user_id = u["id"], defaults = defaults)
-            token = Token(
+            token, _ = Token.objects.get_or_create(
                         user = user, token = api_token,
                         domain = domain, profile = profile)
-        token.save()
         controllers.Populate(token)
 
     def __deleteToken(self, user, data):
