@@ -3,7 +3,10 @@ from rest_framework import views
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
-from canvas_grader.models import Domain, Token, Profile, Course, CourseLink, Quiz, GradingView
+from canvas_grader.models import Domain, Token, Profile, Course, \
+                                 CourseLink, Quiz, GradingView, \
+                                 GradingGroup, GroupQuestionLink, \
+                                 QuizQuestion
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -114,18 +117,6 @@ def GetQuizzes(request, course_id):
         
     return response
 
-def GetGradingViews(request, quiz_id):
-    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
-    if is_valid:
-        grading_views = GradingView.objects.filter(quiz = quiz)
-        data = {"domain": course.domain, "course": course,
-                "quiz": quiz, "grading_views": grading_views}
-        response = render(request, "resources/grading-views.html", data)
-    else:
-        response = Response(status = 404)
-        
-    return response
-
 def AddGradingView(request, quiz_id):
     course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
     if is_valid:
@@ -162,4 +153,36 @@ def QuizId2CourseQuizValid(request, quiz_id):
         course = None
         is_valid = False
     return course, quiz, is_valid
+
+class GradingAPIViews(views.APIView):
+    def get(self, request, quiz_id):
+        course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+        if is_valid:
+            grading_views = GradingView.objects.filter(quiz = quiz)
+            data = {"domain": course.domain, "course": course,
+                    "quiz": quiz, "grading_views": grading_views}
+            response = render(request, "resources/grading-views.html", data)
+        else:
+            response = Response(status = 404)
+            
+        return response
+
+    def post(self, request, quiz_id):
+        course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+        if is_valid:
+            data = request.data["grading_view"]
+            grading_view, _ = GradingView.objects.get_or_create(
+                                quiz = quiz, name = data["name"])
+            for g in data["grading_groups"]:
+                grading_group, _ = GradingGroup.objects.get_or_create(
+                                    name = g["name"], grading_view = grading_view)
+                for q in g["questions"]:
+                    link, _ = GroupQuestionLink.objects.get_or_create(
+                                    quiz_question = QuizQuestion.objects.get(id = q["id"]),
+                                    grading_group = grading_group)
+            response = Response(status = 200)
+        else:
+            response = Response(status = 404)
+        return response
+        
 

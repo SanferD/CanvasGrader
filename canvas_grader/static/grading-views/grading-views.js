@@ -100,7 +100,8 @@ $scope.Save = function()
                    has_questions_per_grading_group && 
                    has_no_duplicate_questions
     if (is_valid) {
-        console.log("valid!")
+        var url = "/quizzes/" + $scope.quiz_id + "/grading-views"
+        $http.post(url, {grading_view: $scope.grading_view}, {headers: $scope.post_headers})
     }
 }
 
