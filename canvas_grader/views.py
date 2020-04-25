@@ -85,7 +85,7 @@ def GetCourses(request, domain_id):
         domain = None
 
     if domain:
-        links = CourseLink.objects.filter(user = user)
+        links = CourseLink.objects.filter(user = user, course__domain = domain)
         courses = [l.course for l in links]
     else:
         courses = None
