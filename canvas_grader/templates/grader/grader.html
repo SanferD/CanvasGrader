@@ -1,0 +1,23 @@
+{% load static %}
+<html>
+  <head>
+    {% include "resources/dependencies.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <script src="{% static 'grader/controller.js' %}"></script>
+    <script src="{% static 'grader/api.js' %}"></script>
+    <script src="{% static 'grader/grader.js' %}"></script>
+    <title>Canvas Grader</title>
+  </head>
+  <body ng-app="grader" ng-controller="grader">
+    <input id="quiz-id" type="hidden" value="{{ quiz.id }}"></input>
+    <input id="questions" type="hidden" value="{{ questions }}"></input>
+    {% include "toolbar/toolbar.html" %}
+    {% verbatim %}
+    <div ng-repeat="question in questions track by $index">
+        {{question.question_text}}
+    </div>
+    {% endverbatim %}
+  </body>
+</html>
+
+

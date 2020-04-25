@@ -10,6 +10,7 @@ function GetValueJSON(id)
 {
     var value = GetValue(id)
     value = value.replace(/'/g, '"')
+    value = value.replace(/None/g, null)
     return JSON.parse(value)
 }
 
