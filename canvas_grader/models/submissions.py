@@ -20,7 +20,7 @@ class Submission(FkSerializableModel):
     assignment = models.ForeignKey(Assignment, on_delete = models.CASCADE)
     posted_at = models.DateTimeField(null = True)
     preview_url = models.URLField()
-    canvas_user = models.OneToOneField(CanvasUser, on_delete = models.CASCADE)
+    canvas_user = models.ForeignKey(CanvasUser, on_delete = models.CASCADE)
 
     class Meta:
         unique_together = ("assignment", "submission_id")
