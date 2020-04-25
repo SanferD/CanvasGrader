@@ -139,21 +139,6 @@ def GetAllQuizQuestions(request, quiz_id):
         response = Response(status = 404)
     return response
 
-def QuizId2CourseQuizValid(request, quiz_id):
-    user = request.user
-    try:
-        quiz = Quiz.objects.get(id = quiz_id)
-    except Quiz.DoesNotExist:
-        quiz = None
-
-    if quiz:
-        course = quiz.assignment.course
-        is_valid = CourseLink.objects.filter(user = user, course = course).count() != 0
-    else:
-        course = None
-        is_valid = False
-    return course, quiz, is_valid
-
 class GradingAPIViews(views.APIView):
     def get(self, request, quiz_id):
         course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
@@ -185,4 +170,50 @@ class GradingAPIViews(views.APIView):
             response = Response(status = 404)
         return response
         
+def GetGradingGroups(request, view_id):
+    view, is_valid = ViewId2ViewValid(request, view_id)
+    if is_valid:
+        grading_groups = view.gradinggroup_set.all()
+        quiz = view.quiz
+        assignment = quiz.assignment
+        course = assignment.course
+        domain = course.domain
+        canvas_user = assignment.submission_set.order_by("canvas_user__name").first()
+        print(canvas_user)
+        data = {"domain": domain, "course": course, "quiz": quiz,
+                "grading_view": view, "grading_groups": grading_groups,
+                "canvas_user": canvas_user}
+        response = render(request, "resources/grading-groups.html", data)
+    else:
+        response = Response(status = 404)
+    return response
+
+def ViewId2ViewValid(request, view_id):
+    user = request.user
+    try:
+        view = GradingView.objects.get(id = view_id)
+    except GradingView.DoesNotExist:
+        view = None
+
+    quiz_id = view.quiz.id if view else None
+    if quiz_id:
+        _, _, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    else:
+        is_valid = False
+    return view, is_valid
+
+def QuizId2CourseQuizValid(request, quiz_id):
+    user = request.user
+    try:
+        quiz = Quiz.objects.get(id = quiz_id)
+    except Quiz.DoesNotExist:
+        quiz = None
+
+    if quiz:
+        course = quiz.assignment.course
+        is_valid = CourseLink.objects.filter(user = user, course = course).count() != 0
+    else:
+        course = None
+        is_valid = False
+    return course, quiz, is_valid
 

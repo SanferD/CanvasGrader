@@ -11,14 +11,15 @@
     <h1>{{ domain.url }} > 
         <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
         <a href="/courses/{{ course.id }}/quizzes">Quizzes</a> >
-        <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a>
+        <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a> >
+        <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
     </h1>
     <button id="add-grading-view" type="button" class="btn btn-info">Add</button>
     <ul>
-    {% for gv in grading_views %}
+    {% for gg in grading_groups %}
         <li style="font-size: large; padding: .25em">
-            <a href="/grading-views/{{ gv.id }}/grading-groups">
-                {{ gv.name }}
+            <a href="/quizzes/{{ quiz.id }}/grader?grading-group={{ gg.id }}&canvas-user={{ canvas_user.id }}">
+                {{ gg.name }}
             </a>
         </li>
     {% endfor %}
@@ -30,5 +31,6 @@
     };
   </script>
 </html>
+
 
 
