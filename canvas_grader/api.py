@@ -1,6 +1,15 @@
 import os
 from canvasapi import Canvas
 import json
+import logging, sys
+
+DEBUG = False
+if DEBUG:
+    logger = logging.getLogger("canvasapi")
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
 
 def GetCurrentUser(domain, token):
     return GetUserByUserId(domain, token, "self")
