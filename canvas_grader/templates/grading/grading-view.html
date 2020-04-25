@@ -26,19 +26,24 @@
             View Name:
             <input maxlength="30"
                    ng-model="grading_view.name"
-                   aria-label="domain"></input>
+                   aria-label="view name"></input>
         </md-input-container>
     </div>
     <div ng-repeat="grading_group in grading_view.grading_groups">
         <table st-table="rowCollection" class="table table-stiped">
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 <md-input-container>
                     Group Name:
                     <input maxlength="30"
                            ng-model="grading_group.name"
-                           aria-label="domain"></input>
+                           aria-label="grading group name"></input>
                 </md-input-container>
+            </td>
+            <td>
+                <button class="btn btn-danger" ng-click="RemoveGradingGroup(grading_group)">
+                   Delete Group
+                </button>
             </td>
         </tr>
         <tr ng-repeat="question in grading_group.questions track by $index">
@@ -49,7 +54,7 @@
                 <select>
             </td>
             <td>
-                <md-button aria-label="add token/domain"
+                <md-button aria-label="remove question"
                            ng-click="RemoveQuestionRow(grading_group, question)">
                     <md-icon>remove</md-icon>
                 </md-button>
@@ -57,7 +62,7 @@
         </tr>
         <tr>
             <td colspan="3">
-                <md-button aria-label="add token/domain"
+                <md-button aria-label="add question"
                            ng-click="AddQuestionRow(grading_group)">
                     <md-icon>add</md-icon>
                 </md-button>
@@ -66,12 +71,12 @@
         </table>
         
     </div>
-    <ng-button class="btn btn-success" ng-click="AddNewGradingGroup()">
+    <button class="btn btn-success" ng-click="AddGradingGroup()">
         Add New Group
-    </ng-button>
-    <ng-button class="btn btn-success" ng-click="Save()">
+    </button>
+    <button class="btn btn-success" ng-click="Save()">
         Save
-    </ng-button>
+    </button>
     {% endverbatim %}
   </body>
 </html>

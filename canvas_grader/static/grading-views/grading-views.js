@@ -44,12 +44,18 @@ $scope.RemoveQuestionRow = function(grading_group, question)
         grading_group.questions.splice(i, 1)
 }
     
-$scope.AddNewGradingGroup = function()
+$scope.AddGradingGroup = function()
 {
     var grading_group = {id: undefined, name: "", questions: []}
     $scope.grading_view.grading_groups.push(grading_group)
 }
 
+$scope.RemoveGradingGroup = function(grading_group)
+{
+    var i = $scope.grading_view.grading_groups.indexOf(grading_group)
+    if (i > -1)
+        $scope.grading_view.grading_groups.splice(i, 1)
+}
 
 $scope.QuestionDropdownOnChange = function()
 {
