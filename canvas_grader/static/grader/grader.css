@@ -1,0 +1,14 @@
+input.points {
+    width: 2.3em;
+    margin: 0 .4em 0 1em;
+}
+
+md-icon.done {
+    color: green;
+    font-size: 14px;
+}
+
+md-icon.not-done {
+    color: orange;
+    font-size: 14px;
+}

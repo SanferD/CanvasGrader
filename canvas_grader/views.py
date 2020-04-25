@@ -224,6 +224,10 @@ def GetGradePageForQuiz(request, quiz_id):
         if grading_group:
             questions = [l.quiz_question.serialize() for l in
                          grading_group.groupquestionlink_set.order_by("quiz_question__quiz_id")]
+            for q in questions:
+                can_answer = q["question_type"] != "text_only_question" 
+                q["can_answer"] = can_answer
+            print(questions)
             submissions = Submission.objects.filter(assignment__quiz = quiz)
             canvas_users = [s.canvas_user.serialize() for s in submissions]
             data = {"quiz": quiz, "questions": questions, "canvas_users": canvas_users}

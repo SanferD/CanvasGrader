@@ -3,6 +3,7 @@
   <head>
     {% include "resources/dependencies.html" %}
     <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'grader/grader.css' %}">
     <script src="{% static 'grader/controller.js' %}"></script>
     <script src="{% static 'grader/api.js' %}"></script>
     <script src="{% static 'grader/grader.js' %}"></script>
@@ -22,15 +23,30 @@
             <md-option ng-repeat="c in canvas_users"
                        ng-value="c">
                     {{ c.name }}
-                    <md-icon ng-if="c.graded"
-                             style="color: green; font-size: 14px">done</md-icon>
-                    <md-icon ng-if="!c.graded"
-                             style="color: orange; font-size: 14px">fiber_manual_record</md-icon>
+                    <md-icon ng-if="c.graded" class="done">done</md-icon>
+                    <md-icon ng-if="!c.graded" class="not-done">fiber_manual_record</md-icon>
             </md-option>
         </md-select>
     </md-input-container>
-    <div ng-repeat="question in questions track by $index">
-        {{question.question_text}}
+    <div ng-repeat="question in questions track by $index"
+         id = "D{{question.question_id}}">
+        <md-content>
+            <md-card>
+                <md-card-title>
+                    <span class="md-headline">{{ question.question_name }}</span>
+                    <span ng-if="question.can_answer" class="md-subhead">
+                        <input class="points" type="text" maxlength=4>/ {{ question.points_possible }}
+                    </span>
+                </md-card-title>
+                <md-card-content>
+                    <div id="Q{{question.question_id}}"></div>
+                    <div ng-if="question.can_answer">
+                        <textarea>
+                        </textarea>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </md-content>
     </div>
     {% endverbatim %}
   </body>
