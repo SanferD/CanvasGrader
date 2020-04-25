@@ -41,7 +41,14 @@
                 <md-card-content>
                     <div id="Q{{question.id}}"></div>
                     <div ng-if="question.can_answer">
-                        <textarea>
+                        <span class="md-subhead">Answer:</span>
+                        <div id="A{{question.id}}" class="answer"></div>
+                    </div>
+                </md-card-content>
+                <md-card-content ng-if="question.can_answer">
+                    <span class="md-subhead">Grader Comment:</span>
+                    <div>
+                        <textarea id="C{{question.id}}">
                         </textarea>
                     </div>
                 </md-card-content>

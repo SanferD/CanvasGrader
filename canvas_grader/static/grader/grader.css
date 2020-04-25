@@ -12,3 +12,8 @@ md-icon.not-done {
     color: orange;
     font-size: 14px;
 }
+
+div.answer {
+    border: solid 1px black;
+    padding: .5em .5em 0 .5em;
+}
