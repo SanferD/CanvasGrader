@@ -16,6 +16,11 @@
         <a href="/quizzes/{{ quiz.id }}/grading-views/add">Create Grading View for {{ quiz.assignment.name }}</a>
     </h1>
     {% verbatim %}
+    <div ng-if="show_errmsg_missing_view_name">Please fill in "View Name".</div>
+    <div ng-if="show_errmsg_missing_groups">Please add a grading group.</div>
+    <div ng-if="show_errmsg_missing_group_name">Please fill in "Group Name" name for all grading groups.</div>
+    <div ng-if="show_errmsg_missing_questions">Please add questions to all grading groups.</div>
+    <div ng-if="show_errmsg_duplicate_questions">Please ensure questions are unique across all grading groups.</div>
     <div>
         <md-input-container>
             View Name:
@@ -67,10 +72,6 @@
     <ng-button class="btn btn-success" ng-click="Save()">
         Save
     </ng-button>
-    <div ng-if="show_duplicate_questions_errmsg">Please include questions and remove duplicate questions</div>
-    <div ng-if="show_invalid_name">Please fill in missing group names</div>
-    <div ng-if="show_missing_view_name_errmsg">Please provide missing view name</div>
-    <div ng-if="show_empty_errmsg">Please provide grading groups</div>
     {% endverbatim %}
   </body>
 </html>

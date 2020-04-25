@@ -2,29 +2,32 @@ var app = angular.module("grading-views", ["ngMaterial", "smart-table"])
 
 app.controller("grading-views", function ($scope, $http) {
 
+$scope.quiz_id = GetValue("quiz-id")
 $scope.grading_view = {
     name: "",
     grading_groups: []
 }
 $scope.all_questions = []
-$scope.show_duplicate_questions_errmsg = false
-$scope.show_invalid_name = false
-$scope.show_missing_view_name_errmsg = false
-$scope.show_empty_errmsg = false
 
+$scope.show_errmsg_missing_view_name = false
+$scope.show_errmsg_missing_groups = false
+$scope.show_errmsg_missing_group_name = false
+$scope.show_errmsg_missing_questions = false
+$scope.show_errmsg_duplicate_questions = false
+
+InitializePostHeaders($scope)
 Initialize()
 function Initialize()
 {
     var grading_view = GetValue("grading-view")
     if (grading_view !== undefined)
         $scope.grading_view = grading_view
-    var quiz_id = GetValue("quiz-id")
-    InitializeAllQuestions(quiz_id)
+    InitializeAllQuestions()
 }
 
-function InitializeAllQuestions(quiz_id)
+function InitializeAllQuestions()
 {
-    $http.get("/quizzes/" + quiz_id + "/questions").then(function (resp) {
+    $http.get("/quizzes/" + $scope.quiz_id + "/questions").then(function (resp) {
         $scope.all_questions = resp.data
     })
 }
@@ -57,38 +60,51 @@ $scope.QuestionDropdownOnChange = function()
 
 $scope.Save = function()
 {
-    var is_valid_name = true
-    var used_questions = []
-    $scope.grading_view.grading_groups.forEach(function(grading_group) {
-        grading_group.questions.forEach(function(q) { q.name = q.name.trim() })
-        grading_group.questions = grading_group.questions.filter(function(q) { return q.name.length > 0 })
-        used_questions = used_questions.concat(grading_group.questions)
-        grading_group.name = grading_group.name.trim()
-        is_valid_name = is_valid_name && grading_group.name.length > 0
+    RemoveEmptyQuestions()
+    $scope.grading_view.name = $scope.grading_view.name.trim()
+    var is_valid_view_name = $scope.grading_view.name.length > 0
+    var has_grading_groups = $scope.grading_view.grading_groups.length > 0
+    var has_valid_grading_group_names = true
+    var has_questions_per_grading_group = true
+    var has_no_duplicate_questions = true
+    var seen = []
+    $scope.grading_view.grading_groups.forEach(function(g) {
+        g.name = g.name.trim()
+        has_valid_grading_group_names = has_valid_grading_group_names && g.name.length > 0
+        has_questions_per_grading_group = has_questions_per_grading_group && g.questions.length > 0
+
+        for (var i = 0; i < g.questions.length && has_no_duplicate_questions; i++) {
+            var q = g.questions[i]
+            if (seen.indexOf(q) == -1)
+                seen.push(q)
+            else
+                has_no_duplicate_questions = false
+        }
     })
 
-    var is_empty = $scope.grading_view.grading_groups.length == 0 
-    var is_valid_questions = is_empty || used_questions.length > 0
-    var seen = []
-    for (var i =0; i < used_questions.length && is_valid_questions; i++) {
-        var q = used_questions[i]
-        if (seen.indexOf(q) == -1)
-            seen.push(q)
-        else
-            is_valid_questions = false
-    }
+    $scope.show_errmsg_missing_view_name = !is_valid_view_name
+    $scope.show_errmsg_missing_groups = !has_grading_groups
+    $scope.show_errmsg_missing_group_name = !has_valid_grading_group_names
+    $scope.show_errmsg_missing_questions = !has_questions_per_grading_group
+    $scope.show_errmsg_duplicate_questions = !has_no_duplicate_questions
 
-    $scope.grading_view.name = $scope.grading_view.name.trim()
-    var is_valid_gv_name = $scope.grading_view.name.length > 0
-
-    $scope.show_empty_errmsg = is_empty
-    $scope.show_duplicate_questions_errmsg = !is_valid_questions
-    $scope.show_invalid_name = !is_valid_name
-    $scope.show_missing_view_name_errmsg = !is_valid_gv_name
-    var is_valid = is_valid_questions && is_valid_name && is_valid_gv_name && !is_empty
+    var is_valid = is_valid_view_name && 
+                   has_grading_groups && 
+                   has_valid_grading_group_names && 
+                   has_questions_per_grading_group && 
+                   has_no_duplicate_questions
     if (is_valid) {
         console.log("valid!")
     }
+}
+
+function RemoveEmptyQuestions()
+{
+    $scope.grading_view.grading_groups.forEach(function(g) {
+        g.questions = g.questions.filter(function(q) {
+            return q.name.length > 0
+        })
+    })
 }
 
 }) 
