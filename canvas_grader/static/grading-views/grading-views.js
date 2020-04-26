@@ -1,6 +1,6 @@
 var app = angular.module("grading-views", ["ngMaterial", "smart-table"])
 
-app.controller("grading-views", function ($scope, $http) {
+app.controller("grading-views", function ($scope, $http, $mdDialog) {
 
 $scope.quiz_id = GetValue("quiz-id")
 $scope.grading_view = {
@@ -118,6 +118,28 @@ function RemoveEmptyQuestions()
             return q !== undefined
         })
     })
+}
+
+$scope.Delete = function()
+{
+    var gv = $scope.grading_view
+    var msg = "Are you sure you want to delete grading view '" + gv.name + "'?"
+    var confirm = $mdDialog.confirm()
+            .title("Confirm deletion")
+            .textContent(msg)
+            .ariaLabel("Confirm deletion")
+            .ok("Delete")
+            .cancel("Cancel")
+    $mdDialog.show(confirm).then(function() {
+        $http({
+            method: "DELETE",
+            url: "/quizzes/" + $scope.quiz_id + "/grading-views",
+            headers: $scope.post_headers,
+            data: {"grading_view": gv.id}
+        }).then(function(resp) {
+            window.location = "/quizzes/" + $scope.quiz_id + "/grading-views"
+        })
+    }, function() {})
 }
 
 }) 

@@ -68,12 +68,18 @@
         </table>
         
     </div>
-    <button class="btn btn-success" ng-click="AddGradingGroup()">
-        Add New Group
-    </button>
-    <button class="btn btn-success" ng-click="Save()">
-        Save
-    </button>
+    <div layout="row">
+        <button class="btn btn-success" ng-click="AddGradingGroup()">
+            Add New Group
+        </button>
+        <span flex></span>
+        <button class="btn btn-success" ng-click="Save()" style="margin-right: .7em;">
+            Save
+        </button>
+        <button ng-if="grading_view.id" class="btn btn-danger" ng-click="Delete()">
+            Delete
+        </button>
+    </div>
     {% endverbatim %}
   </div>
   </body>

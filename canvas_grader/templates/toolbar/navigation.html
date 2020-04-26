@@ -12,8 +12,12 @@
     > Import Quiz
 {% endif %}
 {% if grading_view is not None %}
-    > {{ grading_view.name }}
-    > <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
+    {% if is_create_grading_view %}
+        > Edit: {{ grading_view.name }}
+    {% else %}
+        > {{ grading_view.name }}
+        > <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
+    {% endif %}
 {% elif is_create_grading_view %}
     > Create
 {% endif %}
