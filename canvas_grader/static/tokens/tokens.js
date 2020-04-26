@@ -40,11 +40,15 @@ $scope.RemoveRow = function(t)
 $scope.Save = function()
 {
     var to_save = GetTokensToSave()
-    $http.post("tokens", {tokens: to_save}, {headers: $scope.post_headers})
+    var p1 = $http.post("tokens", {tokens: to_save}, {headers: $scope.post_headers})
 
     var to_delete = GetTokensToDelete()
     data = {tokens: to_delete}
-    $http.delete("tokens", {headers: $scope.post_headers, data: data})
+    var p2 = $http.delete("tokens", {headers: $scope.post_headers, data: data})
+    
+    go_home = function() { window.location = "/" }
+    reload_on_p2 = function() { p2.then(go_home, go_home) }
+    p1.then(reload_on_p2, reload_on_p2)
 }
 
 function GetTokensToSave()
