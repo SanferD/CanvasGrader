@@ -23,7 +23,6 @@ function Initialize()
 
 $scope.ChangeCurrentCanvasUser = function()
 {
-    console.log("change current user")
     $scope.canvas_user_current = $scope.canvas_user_selected
     $scope.GetSubmission($scope.canvas_user_current).then(function(resp) {
         $scope.submissions = resp.data.submissions
@@ -34,7 +33,6 @@ $scope.ChangeCurrentCanvasUser = function()
 function ShowSubmission(submission)
 {
     var id = "A" + submission.quiz_question_id
-    console.log(id)
     a_div = document.getElementById(id)
     if (a_div) {
         a_div.innerHTML = submission.text
