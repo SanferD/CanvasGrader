@@ -4,17 +4,19 @@
 {% if course is not None %}
     > {{ course.name }}
     > <a href="/courses/{{ course.id }}/quizzes">Quizzes</a>
+{% endif %}
 {% if quiz is not None %}
     > {{ quiz.assignment.name }}
     > <a href="/quizzes/{{ quiz.id }}/grading-views">Grading Views</a>
+{% elif is_quiz_import %}
+    > Import Quiz
+{% endif %}
 {% if grading_view is not None %}
     > {{ grading_view.name }}
     > <a href="/grading-views/{{ grading_view.id }}/grading-groups">Grading Groups</a>
+{% endif %}
 {% if grading_group is not None %}
     > {{ grading_group.name }}
-{% endif %}
-{% endif %}
-{% endif %}
 {% endif %}
 </h4>
 {% endif %}
