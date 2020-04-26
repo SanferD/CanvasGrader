@@ -97,7 +97,8 @@ def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
                     user_id = api_user["id"],
                     domain = domain,
                     defaults = {
-                        "name": api_user["name"]
+                        "name": api_user["name"],
+                        "sortable_name": api_user["sortable_name"]
                 })
 
                 submission, _ = Submission.objects.get_or_create(

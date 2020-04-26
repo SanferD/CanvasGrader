@@ -7,6 +7,7 @@ from canvas_grader.models import fields as cgf
 class CanvasUser(FkSerializableModel):
     user_id = cgf.CanvasIdField()
     name = models.CharField(max_length = 50, blank = False, null = False)
+    sortable_name = models.CharField(max_length = 50, blank = False, null = False)
     domain = models.ForeignKey(Domain, on_delete = models.CASCADE)
 
     class Meta:
