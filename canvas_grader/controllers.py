@@ -6,6 +6,8 @@ from canvas_grader.models import Token, Course, CourseLink, \
                                  SubmissionHistoryItem, \
                                  SubmissionDatum, AssessmentItem
 from django.utils.dateparse import parse_datetime
+from canvasapi.quiz import QuizSubmission
+from canvasapi.requester import Requester
 
 def PopulateCoursesOnly(token):
     api_courses = api.GetCourses(token)
@@ -130,4 +132,30 @@ def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
                                                             "score": d["points"],
                                                             "comment": d["more_comments"]
                                                         })
+
+def UpdateScoreAndComments(token, assessment_item):
+    domain = api.GetDomain(token.domain.url)
+    requester = Requester(domain, token.token)
+    sd = assessment_item.submission_datum
+    shi = sd.submission_history_item
+    quiz = Quiz.objects.get(assignment = shi.submission.assignment)
+    attributes = {
+        "course_id": quiz.assignment.course.course_id,
+        "quiz_id": quiz.quiz_id,
+        "id": shi.submission_history_id,
+    }
+    qs = QuizSubmission(requester, attributes)
+    questions = {
+        sd.quiz_question.id: {
+            "score": assessment_item.score,
+            "comment": assessment_item.comment,
+        }
+    }
+    data = {
+        "quiz_submissions": [{
+            "attempt": 1,
+            "questions": questions,
+        }]
+    }
+    qs.update_score_and_comments(**data)
 
