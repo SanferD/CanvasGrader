@@ -42,9 +42,13 @@ def GetAssignments(course):
     return course.get_assignments()
 
 def GetCanvas(domain, token):
-    if not domain.startswith("https://"):
-        domain = "https://" + domain
-    domain = os.path.join(domain, "api", "v1")
+    domain = GetDomain(domain)
     canvas = Canvas(domain, token)
     return canvas
+
+def GetDomain(domain):
+    if not domain.startswith("https://"):
+        domain = "https://" + domain
+    domain = os.path.join(domain, "api", "v1") + "/"
+    return domain
 
