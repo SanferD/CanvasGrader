@@ -12,7 +12,9 @@ $scope.submissions = {}
 $scope.canvas_user_ids_graded = []
 
 $scope.show_loading_msg = false
+$scope.show_saving_msg = false
 
+var autosave_timer = {};
 angular.element(Initialize)
 function Initialize()
 {
@@ -21,6 +23,7 @@ function Initialize()
         q_div = document.getElementById(id)
         q_div.innerHTML = q.question_text.trim()
         $scope.submissions[q.id] = {assessment: {comment: "", score: ""}}
+        autosave_timer[q.id] = undefined
     })
     $scope.GetGradedCanvasUsers().then(function(resp) {
         // this ordering matters to redraw the UI first time around
@@ -36,8 +39,26 @@ $scope.IsGraded = function(canvas_user)
     return $scope.canvas_user_ids_graded.indexOf(canvas_user.id) > -1
 }
 
-var is_getting_graded_canvas_users = false
+var is_waiting = false
 $scope.ChangeCurrentCanvasUser = function()
+{
+    if (HasTimer()) {
+        if (!is_waiting) {
+            is_waiting = true
+            setTimeout(function() {
+                is_waiting = false
+                $scope.ChangeCurrentCanvasUser()
+            }, 500)
+        }
+    } else {
+        ChangeCanvasUser()
+    }
+
+    $scope.show_saving_msg = is_waiting
+}
+
+var is_getting_graded_canvas_users = false
+function ChangeCanvasUser()
 {
     $scope.canvas_user_current = $scope.canvas_user_selected
     $scope.show_loading_msg = true
@@ -52,6 +73,14 @@ $scope.ChangeCurrentCanvasUser = function()
             is_getting_graded_canvas_users = false
         }, function(){ is_getting_graded_canvas_users = false })
     }
+}
+
+function HasTimer()
+{
+    for (var x in autosave_timer)
+        if (autosave_timer[x] !== undefined)
+            return true
+    return false
 }
 
 function ShowSubmission(submission)
@@ -90,7 +119,6 @@ $scope.NextCanvasUser = function()
     }
 }
 
-var autosave_timer;
 var AUTOSAVE_INTERVAL_MS = 1300;
 $scope.OnScoreChange = function(submission)
 {
@@ -104,8 +132,9 @@ $scope.OnCommentChange = function(submission)
 
 function OnChange(submission)
 {
-    clearTimeout(autosave_timer)
-    autosave_timer = setTimeout(function() {
+    var id = submission.quiz_question_id
+    clearTimeout(autosave_timer[id])
+    autosave_timer[id] = setTimeout(function() {
         Save(submission)
     }, AUTOSAVE_INTERVAL_MS)
 }
@@ -113,7 +142,7 @@ function OnChange(submission)
 function Save(submission)
 {
     $scope.SaveSubmission(submission).then(function(resp) {
-        autosave_timer = undefined
+        autosave_timer[submission.quiz_question_id] = undefined
     })
 }
 

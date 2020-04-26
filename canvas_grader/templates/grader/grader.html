@@ -44,6 +44,9 @@
             User ({{ canvas_users.indexOf(canvas_user_current) + 1 }} / {{ canvas_users.length }})
             </div>
         </div>
+        <div ng-if="show_saving_msg">
+            <p style="color: red;">**saving**, please wait...</p>
+        </div>
         <div ng-if="show_loading_msg">
             <p style="color: red;">loading, please wait...</p>
         </div>
