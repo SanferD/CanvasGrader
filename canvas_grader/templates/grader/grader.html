@@ -44,6 +44,9 @@
             User ({{ canvas_users.indexOf(canvas_user_current) + 1 }} / {{ canvas_users.length }})
             </div>
         </div>
+        <div ng-if="show_loading_msg">
+            <p style="color: red;">loading, please wait...</p>
+        </div>
     </md-input-container>
     <md-content>
     <div ng-repeat="question in questions track by $index"
@@ -53,7 +56,8 @@
                     <span class="md-headline">{{ question.question_name }}</span>
                     <span ng-if="question.can_answer" class="md-subhead">
                         <input class="score" type="text" maxlength=4
-                            ng-model="submissions[question.id].assessment.score">/ {{ question.points_possible }}
+                            ng-model="submissions[question.id].assessment.score"
+                            ng-change="OnScoreChange(submissions[question.id])">/ {{ question.points_possible }}
                     </span>
                 </md-card-title>
                 <md-card-content>
@@ -67,7 +71,8 @@
                     <span class="md-subhead">Grader Comment:</span>
                     <div>
                         <textarea class="comment"
-                            ng-model="submissions[question.id].assessment.comment">
+                            ng-model="submissions[question.id].assessment.comment"
+                            ng-change="OnCommentChange(submissions[question.id])">
                         </textarea>
                     </div>
                 </md-card-content>

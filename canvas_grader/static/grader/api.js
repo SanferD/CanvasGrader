@@ -23,5 +23,15 @@ $scope.GetGradedCanvasUsers = function()
     })
 }
 
+$scope.SaveSubmission = function(submission)
+{
+    return $http({
+        method: "POST",
+        url: "/submission-data/" + submission.id + "/assessments",
+        data: submission,
+        headers: $scope.post_headers
+    })
+}
+
 }
 

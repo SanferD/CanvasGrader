@@ -11,6 +11,8 @@ $scope.canvas_user_current = undefined
 $scope.submissions = {}
 $scope.canvas_user_ids_graded = []
 
+$scope.show_loading_msg = false
+
 angular.element(Initialize)
 function Initialize()
 {
@@ -38,8 +40,10 @@ var is_getting_graded_canvas_users = false
 $scope.ChangeCurrentCanvasUser = function()
 {
     $scope.canvas_user_current = $scope.canvas_user_selected
+    $scope.show_loading_msg = true
     $scope.GetSubmission($scope.canvas_user_current).then(function(resp) {
         resp.data.submissions.forEach(ShowSubmission)
+        $scope.show_loading_msg = false
     })
     if (!is_getting_graded_canvas_users) {
         is_getting_graded_canvas_users = true
@@ -84,6 +88,33 @@ $scope.NextCanvasUser = function()
         $scope.canvas_user_selected = $scope.canvas_users[i]
         $scope.ChangeCurrentCanvasUser()
     }
+}
+
+var autosave_timer;
+var AUTOSAVE_INTERVAL_MS = 1300;
+$scope.OnScoreChange = function(submission)
+{
+    OnChange(submission)
+}
+
+$scope.OnCommentChange = function(submission)
+{
+    OnChange(submission)
+}
+
+function OnChange(submission)
+{
+    clearTimeout(autosave_timer)
+    autosave_timer = setTimeout(function() {
+        Save(submission)
+    }, AUTOSAVE_INTERVAL_MS)
+}
+
+function Save(submission)
+{
+    $scope.SaveSubmission(submission).then(function(resp) {
+        autosave_timer = undefined
+    })
 }
 
 }
