@@ -189,10 +189,7 @@ def GetGradingGroups(request, view_id):
 
 def ViewId2ViewValid(request, view_id):
     user = request.user
-    try:
-        view = GradingView.objects.get(id = view_id)
-    except GradingView.DoesNotExist:
-        view = None
+    view = GradingView.objects.filter(id = view_id).first()
 
     quiz_id = view.quiz.id if view else None
     if quiz_id:
@@ -203,10 +200,7 @@ def ViewId2ViewValid(request, view_id):
 
 def QuizId2CourseQuizValid(request, quiz_id):
     user = request.user
-    try:
-        quiz = Quiz.objects.get(id = quiz_id)
-    except Quiz.DoesNotExist:
-        quiz = None
+    quiz = Quiz.objects.filter(id = quiz_id).first()
 
     if quiz:
         course = quiz.assignment.course
