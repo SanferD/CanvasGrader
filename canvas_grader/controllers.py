@@ -146,7 +146,7 @@ def UpdateScoreAndComments(token, assessment_item):
     }
     qs = QuizSubmission(requester, attributes)
     questions = {
-        sd.quiz_question.id: {
+        sd.quiz_question.question_id: {
             "score": assessment_item.score,
             "comment": assessment_item.comment,
         }
