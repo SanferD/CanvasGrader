@@ -101,7 +101,12 @@ $scope.Save = function()
                    has_no_duplicate_questions
     if (is_valid) {
         var url = "/quizzes/" + $scope.quiz_id + "/grading-views"
-        $http.post(url, {grading_view: $scope.grading_view}, {headers: $scope.post_headers})
+        $http.post(
+            url,
+            {grading_view: $scope.grading_view},
+            {headers: $scope.post_headers}).then(function(resp) {
+            window.location = url
+        })
     }
 }
 
