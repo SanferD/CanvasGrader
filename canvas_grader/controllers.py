@@ -88,7 +88,7 @@ def PopulateWithAPIQuiz(quiz, api_assignment, api_quiz):
         api_submissions = api_assignment.get_submissions(include = ["submission_history", "user"])
         for api_submission in api_submissions:
             a = api_submission.attributes
-            if a["workflow_state"] != "unsubmitted":
+            if a["workflow_state"] != "unsubmitted" and a["attempt"] is not None:
                 api_user = a["user"]
                 domain = quiz.assignment.course.domain
                 canvas_user, _ = CanvasUser.objects.get_or_create(
