@@ -1,35 +1,80 @@
 {% load static %}
 <html>
-  <head>
+<head>
     {% include "resources/dependencies.html" %}
     <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
     <script src="{% static 'toolbar/toolbar.js' %}"></script>
     <title>Canvas Grader</title>
-  </head>
-  <body ng-app="canvas_grader" ng-controller="canvas_grader">
+</head>
+<script>
+var app = angular.module("views", ["ngMaterial", "smart-table"])
+app.controller("views", function($scope, $http, $mdDialog) {
+
+InitializePostHeaders($scope)
+$scope.quiz_id = GetValue("quiz")
+$scope.grading_views = GetValueJSON("grading-views")
+
+$scope.Create = function()
+{
+    window.location.href = '/quizzes/' + $scope.quiz_id + '/grading-views/add'
+}
+
+$scope.Edit = function(gv)
+{
+    window.location.href = '/grading-views/' + gv.id + "/edit"
+}
+
+$scope.Delete = function(gv)
+{
+    var msg = "Are you sure you want to delete grading view '" + gv.name + "'?"
+    var confirm = $mdDialog.confirm()
+            .title("Confirm deletion")
+            .textContent(msg)
+            .ariaLabel("Confirm deletion")
+            .ok("Delete")
+            .cancel("Cancel")
+    $mdDialog.show(confirm).then(function() {
+        $http({
+            method: "DELETE",
+            url: "/quizzes/" + $scope.quiz_id + "/grading-views",
+            headers: $scope.post_headers,
+            data: {"grading_view": gv.id}
+        }).then(function(resp) { window.location.reload() })
+    }, function() {})
+}
+
+})
+</script>
+<body ng-app="views" ng-controller="views">
+    <input id="quiz" type="hidden" value="{{ quiz.id }}"></input>
+    <input id="grading-views" type="hidden" value="{{ grading_views }}"></input>
     {% include "toolbar/toolbar.html" %}
     <div class="all-content">
     {% include "toolbar/navigation.html" %}
-    <div class="action-buttons">
+    {% verbatim %}
+    <div>
         <md-button id="add-grading-view"
                 type="button"
                 class="md-primary md-hue-1"
-                onclick="location.href = '/quizzes/{{ quiz.id }}/grading-views/add'">
+                ng-click="Create()">
             Create Grading View
         </md-button>
     </div>
     <span layont="row"><hr flex/></span>
     <ul>
-    {% for gv in grading_views %}
+    <div ng-repeat="gv in grading_views track by $index">
         <li style="font-size: large; padding: .25em">
             <a href="/grading-views/{{ gv.id }}/grading-groups">
                 {{ gv.name }}
             </a>
+            <md-button ng-click="Edit(gv)" class="md-icon-button" style="margin: 0 -.5em 0 1em;"><md-icon>edit</md-icon></md-button>
+            <md-button ng-click="Delete(gv)" class="md-icon-button" style="margin: 0;"><md-icon>delete</md-icon></md-button>
         </li>
-    {% endfor %}
+    </div>
     </ul>
-  </div>
-  </body>
+    </div>
+    {% endverbatim %}
+</body>
 </html>
 
 

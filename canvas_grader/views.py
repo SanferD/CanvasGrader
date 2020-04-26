@@ -147,8 +147,11 @@ class GradingAPIViews(views.APIView):
         course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
         if is_valid:
             grading_views = GradingView.objects.filter(quiz = quiz)
+            gvs = [gv.serialize() for gv in grading_views]
+            for g in gvs:
+                g.pop("date_created")
             data = {"domain": course.domain, "course": course,
-                    "quiz": quiz, "grading_views": grading_views}
+                    "quiz": quiz, "grading_views": gvs}
             response = render(request, "resources/grading-views.html", data)
         else:
             response = Response(status = 404)
@@ -169,6 +172,20 @@ class GradingAPIViews(views.APIView):
                                     quiz_question = QuizQuestion.objects.get(id = q["id"]),
                                     grading_group = grading_group)
             response = Response(status = 200)
+        else:
+            response = Response(status = 404)
+        return response
+
+    def delete(self, request, quiz_id):
+        course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+        if is_valid:
+            gid = request.data["grading_view"]
+            grading_view = GradingView.objects.filter(id = gid).first()
+            if grading_view:
+                grading_view.delete()
+                response = Response(status = 200)
+            else:
+                response = Response(status = 404)
         else:
             response = Response(status = 404)
         return response
