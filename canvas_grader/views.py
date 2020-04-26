@@ -7,7 +7,7 @@ from canvas_grader.models import Domain, Token, Profile, Course, \
                                  CourseLink, Quiz, GradingView, \
                                  GradingGroup, GroupQuestionLink, \
                                  QuizQuestion, Submission, AssessmentItem, \
-                                 Assignment
+                                 Assignment, SubmissionDatum
 from canvas_grader import api
 from canvas_grader import controllers
 import collections
@@ -390,3 +390,34 @@ class QuizImport(views.APIView):
             response = Response(status = 404)
         return response
      
+@api_view(['POST'])
+def SaveAssessment(request, datum_id):
+    user = request.user
+    datum = SubmissionDatum.objects.filter(id = datum_id).first()
+    if datum:
+        course = datum.submission_history_item.submission.assignment.course
+        link = CourseLink.objects.filter(user=user, course=course).first()
+        if link:
+            contents = request.data
+            assessment_data = contents.get("assessment")
+            assessment_item = AssessmentItem.objects.filter(submission_datum = datum).first()
+            if not assessment_item:
+                assessment_item = AssessmentItem(submission_datum = datum)
+            try:
+                assessment_item.score = float(assessment_data["score"])
+            except:
+                pass
+            comment = assessment_data.get("comment", "").strip()
+            if comment:
+                assessment_item.comment = comment
+            assessment_item.save()
+            token = Token.objects.get(user = user, domain = course.domain)
+            controllers.UpdateScoreAndComments(token, assessment_item)
+            return Response(status = 200)
+        else:
+            response = Response(status = 404)
+    else:
+        response = Response(status = 404)
+    return response
+    
+
