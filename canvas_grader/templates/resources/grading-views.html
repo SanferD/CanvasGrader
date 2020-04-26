@@ -10,7 +10,15 @@
     {% include "toolbar/toolbar.html" %}
     <div class="all-content">
     {% include "toolbar/navigation.html" %}
-    <button id="add-grading-view" type="button" class="btn btn-info">Add</button>
+    <div class="action-buttons">
+        <md-button id="add-grading-view"
+                type="button"
+                class="md-primary md-hue-1"
+                onclick="location.href = '/quizzes/{{ quiz.id }}/grading-views/add'">
+            Create Grading View
+        </md-button>
+    </div>
+    <span layont="row"><hr flex/></span>
     <ul>
     {% for gv in grading_views %}
         <li style="font-size: large; padding: .25em">
@@ -22,11 +30,6 @@
     </ul>
   </div>
   </body>
-  <script type = "text/javascript">
-    document.getElementById("add-grading-view").onclick = function () {
-        location.href = "/quizzes/{{ quiz.id }}/grading-views/add"
-    };
-  </script>
 </html>
 
 

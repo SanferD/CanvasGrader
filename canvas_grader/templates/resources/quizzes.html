@@ -10,6 +10,15 @@
     {% include "toolbar/toolbar.html" %}
     <div class="all-content">
     {% include "toolbar/navigation.html" %}
+    <div class="action-buttons">
+        <md-button id="import-quizzes"
+                type="button"
+                class="md-primary md-hue-1"
+                onclick="location.href='/courses/{{ course.id }}/quizzes/import'">
+            Import Quizzes
+        </md-button>
+    </div>
+    <span layont="row"><hr flex/></span>
     <ul>
     {% for quiz in quizzes %}
         <li style="font-size: large; padding: .25em">
@@ -20,5 +29,4 @@
     </div>
   </body>
 </html>
-
 
