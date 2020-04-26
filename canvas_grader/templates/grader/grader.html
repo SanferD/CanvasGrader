@@ -37,7 +37,8 @@
                 <md-card-title>
                     <span class="md-headline">{{ question.question_name }}</span>
                     <span ng-if="question.can_answer" class="md-subhead">
-                        <input class="points" type="text" maxlength=4>/ {{ question.points_possible }}
+                        <input class="score" type="text" maxlength=4
+                            ng-model="submissions[question.id].assessment.score">/ {{ question.points_possible }}
                     </span>
                 </md-card-title>
                 <md-card-content>
@@ -50,7 +51,8 @@
                 <md-card-content ng-if="question.can_answer">
                     <span class="md-subhead">Grader Comment:</span>
                     <div>
-                        <textarea id="C{{question.id}}">
+                        <textarea class="comment"
+                            ng-model="submissions[question.id].assessment.comment">
                         </textarea>
                     </div>
                 </md-card-content>

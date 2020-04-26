@@ -8,7 +8,7 @@ $scope.canvas_users = GetValueJSON("canvas-users")
 $scope.canvas_user_current = undefined
 $scope.canvas_user_selected = $scope.canvas_users[0]
 
-$scope.submissions = []
+$scope.submissions = {}
 
 angular.element(Initialize)
 function Initialize()
@@ -17,6 +17,7 @@ function Initialize()
         var id = "Q" + q.id
         q_div = document.getElementById(id)
         q_div.innerHTML = q.question_text.trim()
+        $scope.submissions[q.id] = {assessment: {comment: "", score: ""}}
     })
     $scope.ChangeCurrentCanvasUser()
 }
@@ -25,23 +26,22 @@ $scope.ChangeCurrentCanvasUser = function()
 {
     $scope.canvas_user_current = $scope.canvas_user_selected
     $scope.GetSubmission($scope.canvas_user_current).then(function(resp) {
-        $scope.submissions = resp.data.submissions
-        $scope.submissions.forEach(ShowSubmission)
+        resp.data.submissions.forEach(ShowSubmission)
     })
 }
 
 function ShowSubmission(submission)
 {
-    var id = "A" + submission.quiz_question_id
+    var q_id = submission.quiz_question_id
+    var id = "A" + q_id
     a_div = document.getElementById(id)
     if (a_div) {
         a_div.innerHTML = submission.text
 
-        var assessment = submission.assessment
-        var id = "C" + submission.quiz_question_id
-        c_ta = document.getElementById(id)
-        c_ta.innerText = assessment? assessment.comment: ""
+        if (submission.assessment === null)
+            submission.assessment = {comment: "", score: ""}
     }
+    $scope.submissions[q_id] = submission
 }
 
 }

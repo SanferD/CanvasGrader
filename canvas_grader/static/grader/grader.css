@@ -1,4 +1,4 @@
-input.points {
+input.score {
     width: 2.3em;
     margin: 0 .4em 0 1em;
 }
@@ -14,6 +14,11 @@ md-icon.not-done {
 }
 
 div.answer {
-    border: solid 1px black;
+    border: solid 2px black;
     padding: .5em .5em 0 .5em;
+}
+
+textarea.comment {
+    width: 100%;
+    height: 120;
 }
