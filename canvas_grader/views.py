@@ -71,7 +71,7 @@ class Tokens(views.APIView):
             token, _ = Token.objects.get_or_create(
                         user = user, token = api_token,
                         domain = domain, profile = profile)
-        controllers.Populate(token)
+        controllers.PopulateCoursesOnly(token)
 
     def __deleteToken(self, user, data):
         id = data.get("id")
