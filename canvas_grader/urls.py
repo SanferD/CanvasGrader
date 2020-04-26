@@ -14,5 +14,6 @@ urlpatterns = [
     path('quizzes/<int:quiz_id>/grader', views.GetGradePageForQuiz),
     path('quizzes/<int:quiz_id>/submissions', views.GetSubmission),
     path('courses/<int:course_id>/quizzes/import', views.QuizImport.as_view()),
+    path('quizzes/<int:quiz_id>/grading-groups/<int:grading_group_id>/canvas-users/graded', views.GetGradedCanvasUsers),
 ]
 

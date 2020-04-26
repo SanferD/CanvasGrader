@@ -10,6 +10,7 @@ from canvas_grader.models import Domain, Token, Profile, Course, \
                                  Assignment
 from canvas_grader import api
 from canvas_grader import controllers
+import collections
 
 def Index(request):
     if request.user.is_authenticated:
@@ -231,10 +232,40 @@ def GetGradePageForQuiz(request, quiz_id):
             for u in canvas_users:
                 n = u["name"]
                 u["name"] = "".join(n.split("'"))
-            data = {"quiz": quiz, "questions": questions, "canvas_users": canvas_users,
-                    "domain": course.domain, "course": course, "grading_group": grading_group,
+            data = {"quiz": quiz, "questions": questions,
+                    "domain": course.domain, "course": course,
+                    "canvas_users": canvas_users,
+                    "grading_group": grading_group,
                     "grading_view": grading_group.grading_view}
             response = render(request, "grader/grader.html", data)
+        else:
+            response = Response(status = 404)
+    else:
+        response = Response(status = 404)
+    return response
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def GetGradedCanvasUsers(request, quiz_id, grading_group_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        grading_group = GradingGroup.objects.filter(id = grading_group_id).first()
+        if grading_group:
+            questions = [l.quiz_question for l in grading_group.groupquestionlink_set.all()]
+            items = AssessmentItem.objects.filter(
+                            submission_datum__quiz_question__in = questions)
+            users = collections.defaultdict(set)
+            for i in items:
+                cu = i.submission_datum.submission_history_item.submission.canvas_user
+                q = i.submission_datum.quiz_question
+                users[cu].add(q)
+
+            graded_users = []
+            q_len = len([q for q in questions if q.question_type != "text_only_question"])
+            for cu, qs in users.items():
+                if len(qs) == q_len:
+                    graded_users.append(cu.id)
+            response = Response(graded_users)
         else:
             response = Response(status = 404)
     else:

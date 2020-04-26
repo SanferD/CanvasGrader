@@ -13,5 +13,15 @@ $scope.GetSubmission = function(canvas_user)
     })
 }
 
+$scope.GetGradedCanvasUsers = function()
+{
+    var url = "/quizzes/" + $scope.quiz_id + "/grading-groups/" +
+              $scope.grading_group_id + "/canvas-users/graded"
+    return $http({
+        url: url,
+        method: "GET"
+    })
+}
+
 }
 

@@ -11,28 +11,43 @@
   </head>
   <body ng-app="grader" ng-controller="grader">
     <input id="quiz-id" type="hidden" value="{{ quiz.id }}"></input>
+    <input id="grading-group-id" type="hidden" value="{{ grading_group.id }}"></input>
     <input id="questions" type="hidden" value="{{ questions }}"></input>
     <input id="canvas-users" type="hidden" value="{{ canvas_users }}"></input>
     {% include "toolbar/toolbar.html" %}
     <div class="all-content">
     {% include "toolbar/navigation.html" %}
     {% verbatim %}
-    <md-input-container>
-        <md-select ng-model="canvas_user_selected"
-                   style="min-width: 200px;"
-                   aria-label="choose student"
-                   ng-change="ChangeCurrentCanvasUser()">
-            <md-option ng-repeat="c in canvas_users"
-                       ng-value="c">
-                    {{ c.name }}
-                    <md-icon ng-if="c.graded" class="done">done</md-icon>
-                    <md-icon ng-if="!c.graded" class="not-done">fiber_manual_record</md-icon>
-            </md-option>
-        </md-select>
+    <md-input-container id="canvas-user-dropdown">
+        <div class="canvas-user" layout="row" style="font-size: 18">
+            <md-button class="md-fab md-mini md-primary change-user-btn"
+                       ng-click="PreviousCanvasUser()">
+                <md-icon>arrow_back</md-icon>
+            </md-button>
+            <md-select ng-model="canvas_user_selected"
+                       style="min-width: 300px;"
+                       aria-label="choose student"
+                       ng-change="ChangeCurrentCanvasUser()" required>
+                <md-option ng-repeat="c in canvas_users"
+                           ng-value="c">
+                        <div>{{ c.name }}
+                        <md-icon ng-show="IsGraded(c)" class="done">done</md-icon>
+                        <md-icon ng-show="!IsGraded(c)" class="not-done">fiber_manual_record</md-icon>
+                        </div>
+                </md-option>
+            </md-select>
+            <md-button class="md-fab md-mini md-primary change-user-btn"
+                       ng-click="NextCanvasUser()">
+                <md-icon>arrow_forward</md-icon>
+            </md-button>
+            <div ng-if="canvas_user_current" style="padding: 1.25em 0 0 1em">
+            User ({{ canvas_users.indexOf(canvas_user_current) + 1 }} / {{ canvas_users.length }})
+            </div>
+        </div>
     </md-input-container>
+    <md-content>
     <div ng-repeat="question in questions track by $index"
          id = "D{{question.id}}">
-        <md-content>
             <md-card>
                 <md-card-title>
                     <span class="md-headline">{{ question.question_name }}</span>
@@ -57,8 +72,8 @@
                     </div>
                 </md-card-content>
             </md-card>
-        </md-content>
     </div>
+    </md-content>
     {% endverbatim %}
     </div>
   </body>

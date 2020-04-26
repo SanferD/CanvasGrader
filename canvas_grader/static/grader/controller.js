@@ -5,4 +5,3 @@ app.controller("grader", function ($scope, $http) {
     InitializeGrader($scope, $http)
 })
 
-
