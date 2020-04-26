@@ -6,7 +6,8 @@ from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from canvas_grader.models import Domain, Token, Profile, Course, \
                                  CourseLink, Quiz, GradingView, \
                                  GradingGroup, GroupQuestionLink, \
-                                 QuizQuestion, Submission, AssessmentItem
+                                 QuizQuestion, Submission, AssessmentItem, \
+                                 Assignment
 from canvas_grader import api
 from canvas_grader import controllers
 
@@ -270,3 +271,42 @@ def GetSubmission(request, quiz_id):
     else:
         response = Response(status = 404)
     return response
+
+class QuizImport(views.APIView):
+    def get(self, request, course_id):
+        user = request.user
+        course_link = CourseLink.objects.filter(user = user, course__id = course_id).first()
+        if course_link:
+            course = course_link.course
+            token = Token.objects.get(user = user, domain = course.domain)
+            api_course = api.GetCourse(token, course.course_id)
+            api_quiz_assignments = api.GetQuizAssignments(api_course)
+            api_quizzes = [[a.attributes["id"], a.attributes["name"]] for a in api_quiz_assignments]
+            assignments = Assignment.objects.filter(course = course)
+            db_quizzes = [[a.assignment_id, a.name] for a in assignments]
+            api_quizzes.sort()
+            db_quizzes.sort()
+            data = {"api_quizzes": api_quizzes, "db_quizzes": db_quizzes,
+                    "domain": course.domain, "course": course}
+            response = render(request, "quizzes/import.html", data)
+        else:
+            response = Response(status = 404)
+        return response
+
+    def post(self, request, course_id):
+        user = request.user
+        course_link = CourseLink.objects.filter(user = user, course__id = course_id).first()
+        if course_link:
+            course = course_link.course
+            token = Token.objects.get(user = user, domain = course.domain)
+            assignment_ids = [x[0] for x in request.data]
+            api_course = api.GetCourse(token, course.course_id)
+            all_quiz_assignments = api.GetQuizAssignments(api_course)
+            api_quiz_assignments = [x for x in all_quiz_assignments if x.attributes["id"] in assignment_ids]
+            for api_quiz_assignment in api_quiz_assignments:
+                controllers.PopulateQuizOnly(course, api_course, api_quiz_assignment)
+            response = Response(status = 204)
+        else:
+            response = Response(status = 404)
+        return response
+     

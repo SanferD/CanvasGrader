@@ -1,0 +1,43 @@
+{% load static %}
+<html>
+  <head>
+    {% include "resources/dependencies.html" %}
+    <link rel="stylesheet" type="text/css" href="{% static 'toolbar/toolbar.css' %}">
+    <script src="{% static 'toolbar/toolbar.js' %}"></script>
+    <script src="{% static 'quizzes/quizzes.js' %}"></script>
+    <title>Canvas Grader</title>
+  </head>
+  <body ng-app="quizzes" ng-controller="quizzes">
+    <input id="course" type="hidden" value="{{course.id}}">
+    <input id="api-quizzes" type="hidden" value="{{api_quizzes}}">
+    <input id="db-quizzes" type="hidden" value="{{db_quizzes}}">
+    {% include "toolbar/toolbar.html" %}
+    <div class="all-content">
+    {% include "toolbar/navigation.html" with is_quiz_import=True %}
+    {% verbatim %}
+    <div ng-if="unimported.length > 0">
+        <h3>Unimported</h3>
+        <div ng-repeat="q in unimported" flex="100">
+            <md-checkbox ng-checked="exists(q)" ng-click="toggle(q)">
+                <h4>{{ q[1] }}</h4>
+            </md-checkbox>
+        </div>
+        <span layont="row"><hr flex/></span>
+    </div>
+    <div ng-if="imported.length > 0">
+        <h3>Imported</h3>
+        <ul ng-repeat="q in imported" flex="100">
+            <li><h4>{{ q[1] }}</h4></li>
+        </ul>
+        <span layont="row"><hr flex/></span>
+    </div>
+    <div ng-if="unimported.length > 0">
+        <button ng-click="Import()" class="btn btn-success">
+            Import
+        </button>
+    </div>
+    {% endverbatim %}
+    </div>
+  </body>
+</html>
+

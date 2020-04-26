@@ -13,5 +13,6 @@ urlpatterns = [
     path('grading-views/<int:view_id>/grading-groups', views.GetGradingGroups),
     path('quizzes/<int:quiz_id>/grader', views.GetGradePageForQuiz),
     path('quizzes/<int:quiz_id>/submissions', views.GetSubmission),
+    path('courses/<int:course_id>/quizzes/import', views.QuizImport.as_view()),
 ]
 
