@@ -9,6 +9,7 @@ urlpatterns = [
     path('courses/<int:course_id>/quizzes', views.GetQuizzes),
     path('quizzes/<int:quiz_id>/grading-views', views.GradingAPIViews.as_view()),
     path('quizzes/<int:quiz_id>/grading-views/add', views.AddGradingView),
+    path('quizzes/<int:quiz_id>/grading-views/<int:grading_view_id>/edit', views.EditGradingView),
     path('quizzes/<int:quiz_id>/questions', views.GetAllQuizQuestions),
     path('grading-views/<int:view_id>/grading-groups', views.GetGradingGroups),
     path('quizzes/<int:quiz_id>/grader', views.GetGradePageForQuiz),

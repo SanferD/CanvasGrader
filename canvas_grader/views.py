@@ -131,12 +131,38 @@ def AddGradingView(request, quiz_id):
         
     return response
 
+def EditGradingView(request, quiz_id, grading_view_id):
+    course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
+    if is_valid:
+        grading_view = GradingView.objects.filter(id = grading_view_id).first()
+        if grading_view:
+            grading_groups = GradingGroup.objects.filter(grading_view = grading_view)
+            ggs = list()
+            for gg in grading_groups:
+                d = gg.serialize()
+                questions = [l.quiz_question.id for l in GroupQuestionLink.objects.filter(grading_group = gg)]
+                d["questions"] = questions
+                ggs.append(d)
+            grading_view = grading_view.serialize()
+            grading_view.pop("date_created")
+            grading_view["grading_groups"] = ggs
+            data = {"domain": course.domain, "course": course,
+                    "quiz": quiz, "grading_view": grading_view,
+                    "grading_groups": ggs}
+            response = render(request, "grading/grading-view.html", data)
+        else:
+            response = Response(status = 404)
+    else:
+        response = Response(status = 404)
+    return response
+    
+
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
 def GetAllQuizQuestions(request, quiz_id):
     course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
     if is_valid:
-        questions = [{"id": q.id, "name": q.question_name} for q in quiz.quizquestion_set.all()]
+        questions = [{"id": q.id, "question_name": q.question_name} for q in quiz.quizquestion_set.all()]
         response = Response(questions)
     else:
         response = Response(status = 404)
@@ -162,14 +188,20 @@ class GradingAPIViews(views.APIView):
         course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
         if is_valid:
             data = request.data["grading_view"]
-            grading_view, _ = GradingView.objects.get_or_create(
+            if "id" in data:
+                GradingView.objects.get(id = data["id"]).delete()
+                grading_view = GradingView(id = data["id"],
                                 quiz = quiz, name = data["name"])
+                grading_view.save()
+            else:
+                grading_view, _ = GradingView.objects.get_or_create(
+                                    quiz = quiz, name = data["name"])
             for g in data["grading_groups"]:
                 grading_group, _ = GradingGroup.objects.get_or_create(
                                     name = g["name"], grading_view = grading_view)
                 for q in g["questions"]:
                     link, _ = GroupQuestionLink.objects.get_or_create(
-                                    quiz_question = QuizQuestion.objects.get(id = q["id"]),
+                                    quiz_question = QuizQuestion.objects.get(id = q),
                                     grading_group = grading_group)
             response = Response(status = 200)
         else:

@@ -21,7 +21,7 @@ $scope.Create = function()
 
 $scope.Edit = function(gv)
 {
-    window.location.href = '/grading-views/' + gv.id + "/edit"
+    window.location.href = '/quizzes/' + $scope.quiz_id + '/grading-views/' + gv.id + "/edit"
 }
 
 $scope.Delete = function(gv)
