@@ -10,11 +10,8 @@
     <input type="hidden" id="grading-view" value="{{ grading_view }}"></input>
     <input type="hidden" id="quiz-id" value="{{ quiz.id }}"></input>
     {% include "toolbar/toolbar.html" %}
-    <h1>{{ domain.url }} > 
-        <a href="/domains/{{ domain.id }}/courses">Courses</a> > 
-        <a href="/courses/{{ course.id }}/quizzes">Quizzes</a> >
-        <a href="/quizzes/{{ quiz.id }}/grading-views/add">Create Grading View for {{ quiz.assignment.name }}</a>
-    </h1>
+    <div class="all-content">
+    {% include "toolbar/navigation.html" with is_create_grading_view=True %}
     {% verbatim %}
     <div ng-if="show_errmsg_missing_view_name">Please fill in "View Name".</div>
     <div ng-if="show_errmsg_missing_groups">Please add a grading group.</div>
@@ -78,6 +75,7 @@
         Save
     </button>
     {% endverbatim %}
+  </div>
   </body>
 </html>
 

@@ -8,6 +8,7 @@
   </head>
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
+    <div class="all-content">
     <h1>Settings</h1>
         <table st-table="rowCollection" class="table table-stiped">
             <thead>
@@ -44,6 +45,7 @@
             </tbody>
         </table>
         <ng-button class="btn btn-success" ng-click="Save()">Save</ng-button>
+  </div>
   </body>
 </html>
 

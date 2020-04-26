@@ -8,6 +8,7 @@
   </head>
   <body ng-app="canvas_grader" ng-controller="canvas_grader">
     {% include "toolbar/toolbar.html" %}
+    <div class="all-content">
     <h1>Domains</h1>
     <ul>
     {% for domain in domains %}
@@ -16,6 +17,7 @@
         </li>
     {% endfor %}
     </ul>
+    </div>
   </body>
 </html>
 
