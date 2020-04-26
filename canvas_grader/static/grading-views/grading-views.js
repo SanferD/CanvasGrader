@@ -19,9 +19,10 @@ InitializePostHeaders($scope)
 Initialize()
 function Initialize()
 {
-    var grading_view = GetValue("grading-view")
-    if (grading_view !== undefined)
+    var grading_view = GetValueJSON("grading-view")
+    if (grading_view !== undefined) {
         $scope.grading_view = grading_view
+    }
     InitializeAllQuestions()
 }
 
@@ -34,7 +35,7 @@ function InitializeAllQuestions()
 
 $scope.AddQuestionRow = function(grading_group)
 {
-    grading_group.questions.push({id: undefined, name: ""})
+    grading_group.questions.push(undefined)
 }
 
 $scope.RemoveQuestionRow = function(grading_group, question)
@@ -114,7 +115,7 @@ function RemoveEmptyQuestions()
 {
     $scope.grading_view.grading_groups.forEach(function(g) {
         g.questions = g.questions.filter(function(q) {
-            return q.name.length > 0
+            return q !== undefined
         })
     })
 }
