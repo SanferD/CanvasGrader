@@ -1,4 +1,5 @@
 asgiref==3.2.7
+awsebcli==3.18.0
 canvasapi==0.15.0
 django-allauth==0.41.0
 django-extensions==2.2.9
