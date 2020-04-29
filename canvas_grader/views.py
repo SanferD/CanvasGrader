@@ -400,18 +400,15 @@ def SaveAssessment(request, datum_id):
         course = datum.submission_history_item.submission.assignment.course
         link = CourseLink.objects.filter(user=user, course=course).first()
         if link:
-            contents = request.data
-            assessment_data = contents.get("assessment")
+            assessment_data = request.data["assessment"]
             assessment_item = AssessmentItem.objects.filter(submission_datum = datum).first()
             if not assessment_item:
                 assessment_item = AssessmentItem(submission_datum = datum)
             try:
-                assessment_item.score = float(assessment_data["score"])
+                assessment_item.score = float(assessment_data["score"] or 0)
             except:
                 pass
-            comment = assessment_data.get("comment", "").strip()
-            if comment:
-                assessment_item.comment = comment
+            assessment_item.comment = assessment_data["comment"].strip()
             assessment_item.save()
             token = Token.objects.get(user = user, domain = course.domain)
             controllers.UpdateScoreAndComments(token, assessment_item)
