@@ -162,7 +162,8 @@ def EditGradingView(request, quiz_id, grading_view_id):
 def GetAllQuizQuestions(request, quiz_id):
     course, quiz, is_valid = QuizId2CourseQuizValid(request, quiz_id)
     if is_valid:
-        questions = [{"id": q.id, "question_name": q.question_name} for q in quiz.quizquestion_set.all()]
+        questions = [{"id": q.id, "question_name": q.question_name}
+                     for q in quiz.quizquestion_set.all().order_by("question_id")]
         response = Response(questions)
     else:
         response = Response(status = 404)
